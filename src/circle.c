@@ -44,6 +44,6 @@ int main(int argc, char **argv) {
   bmp_save(bmp, argv[1]);
   // Free resources before termination
   bmp_destroy(bmp);
--
+
   return 0;
 }
