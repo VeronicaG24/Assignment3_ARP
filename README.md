@@ -20,5 +20,5 @@ To work with the bitmap library, you need to follow these steps:
 ## Using the libbitmap library in your code
 Now that you have properly installed the library in your system, it's time to use it in your programs:
 1. Include the library in your programs via ```#include <bmpfile.h>```. If you want to check the content of ```bmpfile.h``` to glimpse the functionalities of the library, navigate to ```/usr/local/include```, where the header file should be located.
-2. Compile programs which use the *libbitmap* library by linking the shared library with the ```-lbmp``` command
+2. Compile programs which use the *libbitmap* library by linking the shared library with the ```-lbmp``` command   
 e.g., : ```gcc src/circle.c -lbmp -lm -o bin/circle```
