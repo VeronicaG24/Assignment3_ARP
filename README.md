@@ -20,8 +20,8 @@ To work with the bitmap library, you need to follow these steps:
 ### Using *libbitmap* in your code
 Now that you have properly installed the library in your system, it's time to use it in your programs:
 1. Include the library in your programs via ```#include <bmpfile.h>```. If you want to check the content of ```bmpfile.h``` to glimpse the functionalities of the library, navigate to ```/usr/local/include```, where the header file should be located.
-2. Compile programs which use the *libbitmap* library by linking the shared library with the ```-lbmp``` command   
-Example for compiling **circle.c**: ```gcc src/circle.c -lbmp -lm -o bin/circle```
+2. Compile programs which use the *libbitmap* library by linking the shared library with the ```-lbmp``` command.     
+Example for compiling **circle.c**: ```gcc src/circle.c -lbmp -lm -o bin/circle``` 
 
 ## Compiling and running **processA** and **processB**
 The two processes are implemented as UIs through *ncurses* library, therefore you need to compile their source files by linking the shared library via ```-lncurses```. As for the first assignment, exploit the resize event of the windows to get out of situations in which the graphical elements do not properly spawn.
