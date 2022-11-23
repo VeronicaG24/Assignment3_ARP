@@ -9,3 +9,7 @@ As for the first assignment, you also find a **master** process already prepared
 Additionally, I have prepared a simple program called **circle.c**, which shows you the basic functionalities of the *libbitmap* library. Please, note that the **circle.c** process must not appear in your final project. It is simply meant to be a guide for you on how to use the bitmap library, therefore you will need to properly use portions of that code in **processA** and **processB** in order to develop your solution.
 
 ## libbitmap installation setup
+To work with the bitmap library, you need to follow these steps:
+1. Download the source code from the GitHub repo
+   ```https://github.com/draekko/libbitmap.git```
+   
