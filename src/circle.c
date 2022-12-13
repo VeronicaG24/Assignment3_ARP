@@ -3,6 +3,7 @@
 #include <stdlib.h>
 #include <math.h>
 
+
 int main(int argc, char **argv) {
 
   // Data structure for storing the bitmap file
