@@ -1,4 +1,5 @@
 #include "./../include/processA_utilities.h"
+#include <bmpfile.h>
 
 int main(int argc, char *argv[])
 {
@@ -7,6 +8,12 @@ int main(int argc, char *argv[])
 
     // Initialize UI
     init_console_ui();
+
+    //bitmap locale
+
+    //shared memory
+    
+    //semaforo
 
     // Infinite loop
     while (TRUE)
@@ -29,6 +36,7 @@ int main(int argc, char *argv[])
             if(getmouse(&event) == OK) {
                 if(check_button_pressed(print_btn, &event)) {
                     mvprintw(LINES - 1, 1, "Print button pressed");
+                    //stampare bitmap
                     refresh();
                     sleep(1);
                     for(int j = 0; j < COLS - BTN_SIZE_X - 2; j++) {
@@ -42,6 +50,9 @@ int main(int argc, char *argv[])
         else if(cmd == KEY_LEFT || cmd == KEY_RIGHT || cmd == KEY_UP || cmd == KEY_DOWN) {
             move_circle(cmd);
             draw_circle();
+            //cancella vecchia bitmap
+            //disegna nuovo cerchio con centro in posizione monitor
+            //copia in shared memory
         }
     }
     

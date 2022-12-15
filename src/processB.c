@@ -1,4 +1,5 @@
 #include "./../include/processB_utilities.h"
+#include <bmpfile.h>
 
 int main(int argc, char const *argv[])
 {
@@ -7,12 +8,21 @@ int main(int argc, char const *argv[])
 
     // Initialize UI
     init_console_ui();
+    //creare bitmap locale
 
+    //old center
+
+    //shared memory
+
+    //semafori
+    
     // Infinite loop
     while (TRUE) {
 
         // Get input in non-blocking mode
         int cmd = getch();
+        
+        //copia da shared memory a posizione locale
 
         // If user resizes screen, re-draw UI...
         if(cmd == KEY_RESIZE) {
@@ -25,6 +35,9 @@ int main(int argc, char const *argv[])
         }
 
         else {
+            //controllare centro nuova bitmapa
+            //se diverso
+                //plotta nuovo punto e distanza dal vecchio
             mvaddch(LINES/2, COLS/2, '0');
             refresh();
         }
