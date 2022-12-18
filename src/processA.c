@@ -1,5 +1,12 @@
 #include "./../include/processA_utilities.h"
 #include <bmpfile.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <fcntl.h>
+#include <sys/shm.h>
+#include <sys/stat.h>
+#include <sys/mman.h>
 
 int main(int argc, char *argv[])
 {
@@ -12,8 +19,38 @@ int main(int argc, char *argv[])
     //bitmap locale
 
     //shared memory
+    const char* shm_name = "\bitmap";
+    const int size=sizeof(int);
+    int shm_fd;
+    void *ptr;
+    //open the shared memery
+    shm_fd=shm_open(shm_name, O_CREAT|O_RDWR, 0666);
+    if(shm_fd==-1){
+        perror("A-error in open the shared memory:");
+    }
+    
+    //set the shared memory on the right dimension
+    if(ftruncate(shm_fd,size)==-1){
+        perror("A-error in truncate the shared memory");
+    }
+    /*
+    //pointer to reference the shared memory
+    ptr= mmap(0, size,PROT_WRITE, MAP_SHARED,shm_fd,0);
+    if(ptr<0){
+        perror("A-error in mapping the shared memory:")
+    }
+
+    //to unmap the pointer
+    mummap(ptr,size);
+
+    //to close the shared memory 
+    if(shm_unlink(shm_fd)==-1){
+        perror("A-Can't unlink shared memory");
+    }; 
+    */
     
     //semaforo
+
 
     // Infinite loop
     while (TRUE)
