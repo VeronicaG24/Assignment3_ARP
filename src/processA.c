@@ -87,6 +87,7 @@ int main(int argc, char *argv[])
         else if(cmd == KEY_LEFT || cmd == KEY_RIGHT || cmd == KEY_UP || cmd == KEY_DOWN) {
             move_circle(cmd);
             draw_circle();
+            //printf("%d, %d", get_x(), get_y());
             //cancella vecchia bitmap
             //disegna nuovo cerchio con centro in posizione monitor
             //copia in shared memory

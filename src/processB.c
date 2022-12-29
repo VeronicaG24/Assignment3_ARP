@@ -32,7 +32,7 @@ int main(int argc, char const *argv[])
     
     //set the shared memory on the right dimension
     if(ftruncate(shm_fd,size)==-1){
-        perror("B-error in truncate the shared memory");
+        perror("B-error in truncate the shared memory ");
     }
     /*
     //pointer to reference the shared memory
