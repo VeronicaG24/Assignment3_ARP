@@ -8,11 +8,15 @@
 #include <sys/stat.h>
 #include <sys/mman.h>
 
+typedef struct{
+    int x, y;
+}center;
+
 int main(int argc, char const *argv[])
 {
     // Utility variable to avoid trigger resize event on launch
     int first_resize = TRUE;
-
+    center c;
     // Initialize UI
     init_console_ui();
     //creare bitmap locale
@@ -21,6 +25,7 @@ int main(int argc, char const *argv[])
 
     //shared memory
     const char* shm_name = "\bitmap";
+    //1600x600x3 size della memoria condivisa matrice in cui copiare bitmap
     const int size=sizeof(int);
     int shm_fd;
     void *ptr;
@@ -30,17 +35,14 @@ int main(int argc, char const *argv[])
         perror("B-error in open the shared memory:");
     }
     
-    //set the shared memory on the right dimension
-    if(ftruncate(shm_fd,size)==-1){
-        perror("B-error in truncate the shared memory ");
-    }
-    /*
+    
     //pointer to reference the shared memory
     ptr= mmap(0, size,PROT_READ, MAP_SHARED,shm_fd,0);
     if(ptr<0){
-        perror("B-error in mapping the shared memory:")
+        perror("B-error in mapping the shared memory:");
     }
 
+    /*
     //to unmap the pointer
     if(mummap(ptr,size)==-1){
         perror("B-Can't unmap shared memory");
@@ -73,6 +75,13 @@ int main(int argc, char const *argv[])
         }
 
         else {
+            sprintf(&c.x, "%d", ptr);
+            ptr += sizeof(int);
+            sprintf(&c.y, "%d", ptr);
+            ptr= mmap(0, size,PROT_READ, MAP_SHARED,shm_fd,0);
+            if(ptr<0){
+                perror("B-error in mapping the shared memory:");
+            }
             //controllare centro nuova bitmapa
             //se diverso
                 //plotta nuovo punto e distanza dal vecchio

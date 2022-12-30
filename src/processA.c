@@ -8,11 +8,14 @@
 #include <sys/stat.h>
 #include <sys/mman.h>
 
+typedef struct{
+    int x, y;
+}center;
 int main(int argc, char *argv[])
 {
     // Utility variable to avoid trigger resize event on launch
     int first_resize = TRUE;
-
+    center c;
     // Initialize UI
     init_console_ui();
 
@@ -20,7 +23,7 @@ int main(int argc, char *argv[])
 
     //shared memory
     const char* shm_name = "\bitmap";
-    const int size=sizeof(int);
+    const int size=sizeof(center);
     int shm_fd;
     void *ptr;
     //open the shared memery
@@ -33,21 +36,23 @@ int main(int argc, char *argv[])
     if(ftruncate(shm_fd,size)==-1){
         perror("A-error in truncate the shared memory");
     }
-    /*
+    
     //pointer to reference the shared memory
     ptr= mmap(0, size,PROT_WRITE, MAP_SHARED,shm_fd,0);
     if(ptr<0){
-        perror("A-error in mapping the shared memory:")
+        perror("A-error in mapping the shared memory:");
     }
 
     //to unmap the pointer
-    mummap(ptr,size);
+    //mummap(ptr,size);
+    
 
+    /*
     //to close the shared memory 
     if(shm_unlink(shm_fd)==-1){
         perror("A-Can't unlink shared memory");
-    }; 
-    */
+    };*/
+    
     
     //semaforo
 
@@ -87,7 +92,18 @@ int main(int argc, char *argv[])
         else if(cmd == KEY_LEFT || cmd == KEY_RIGHT || cmd == KEY_UP || cmd == KEY_DOWN) {
             move_circle(cmd);
             draw_circle();
-            //printf("%d, %d", get_x(), get_y());
+            c.x=get_x();
+            c.y=get_y();
+            //send new position of the center
+            sprintf(ptr,"%d", c.x);
+            ptr += sizeof(int);
+            sprintf(ptr,"%d", c.y);
+            ptr= mmap(0, size,PROT_WRITE, MAP_SHARED,shm_fd,0);
+            if(ptr<0){
+                perror("A-error in mapping the shared memory:");
+            }
+            printf("%d, %d", get_x(), get_y());
+            fflush(stdout);
             //cancella vecchia bitmap
             //disegna nuovo cerchio con centro in posizione monitor
             //copia in shared memory
