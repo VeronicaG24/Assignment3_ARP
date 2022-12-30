@@ -7,10 +7,46 @@
 #include <sys/shm.h>
 #include <sys/stat.h>
 #include <sys/mman.h>
+#include <semaphore.h>
+#include <errno.h>
+#include <signal.h>
+
+#define SEM_PATH_1 "/sem_w"
+#define SEM_PATH_2 "/sem_r"
 
 typedef struct{
     int x, y;
 }center;
+//shared memory
+const char* shm_name = "\bitmap";
+const int size=sizeof(center);
+int shm_fd;
+void *ptr;
+//semaphores
+sem_t * sem_id1;
+sem_t * sem_id2;
+//signal handler
+void sig_handler(int signo){
+    if(signo==SIGINT){
+        //close semaphore
+        sem_close(sem_id1);
+        sem_close(sem_id2);
+        sem_unlink(SEM_PATH_1);
+        sem_unlink(SEM_PATH_1);
+        //unmmap pointer
+        //to unmap the pointer
+        munmap(ptr,size);
+        //close shared memory
+        if(shm_unlink(shm_name)==-1){
+        perror("A-Can't unlink shared memory");
+        }
+        if(signal(SIGINT, sig_handler)==SIG_ERR) {
+        perror("A-Can't set the signal handler for SIGINT\n");
+        exit(-1);
+        }
+    }
+}   
+
 int main(int argc, char *argv[])
 {
     // Utility variable to avoid trigger resize event on launch
@@ -19,13 +55,13 @@ int main(int argc, char *argv[])
     // Initialize UI
     init_console_ui();
 
+    if(signal(SIGINT, sig_handler)==SIG_ERR) {
+        perror("A-Can't set the signal handler for SIGINT\n");
+        exit(-1);
+    }
     //bitmap locale
 
     //shared memory
-    const char* shm_name = "\bitmap";
-    const int size=sizeof(center);
-    int shm_fd;
-    void *ptr;
     //open the shared memery
     shm_fd=shm_open(shm_name, O_CREAT|O_RDWR, 0666);
     if(shm_fd==-1){
@@ -43,10 +79,8 @@ int main(int argc, char *argv[])
         perror("A-error in mapping the shared memory:");
     }
 
-    //to unmap the pointer
-    //mummap(ptr,size);
-    
 
+    
     /*
     //to close the shared memory 
     if(shm_unlink(shm_fd)==-1){
@@ -55,7 +89,10 @@ int main(int argc, char *argv[])
     
     
     //semaforo
-
+    sem_id1 = sem_open(SEM_PATH_1, O_CREAT, S_IRUSR | S_IWUSR, 1);
+    sem_id2 = sem_open(SEM_PATH_2, O_CREAT, S_IRUSR | S_IWUSR, 1);
+    sem_init(sem_id1, 1, 1); //initialized to 1
+    sem_init(sem_id2, 1, 0); //initialized to 0
 
     // Infinite loop
     while (TRUE)
@@ -94,16 +131,19 @@ int main(int argc, char *argv[])
             draw_circle();
             c.x=get_x();
             c.y=get_y();
+            sem_wait(sem_id1);
             //send new position of the center
             sprintf(ptr,"%d", c.x);
             ptr += sizeof(int);
             sprintf(ptr,"%d", c.y);
+            sem_post(sem_id2);
             ptr= mmap(0, size,PROT_WRITE, MAP_SHARED,shm_fd,0);
             if(ptr<0){
                 perror("A-error in mapping the shared memory:");
             }
-            printf("%d, %d", get_x(), get_y());
-            fflush(stdout);
+            //sleep(1);
+            //printf("%d, %d", get_x(), get_y());
+            //fflush(stdout);
             //cancella vecchia bitmap
             //disegna nuovo cerchio con centro in posizione monitor
             //copia in shared memory
@@ -111,5 +151,19 @@ int main(int argc, char *argv[])
     }
     
     endwin();
+    printf("closing\n");
+    fflush(stdout);
+    sleep(5);
+    //unmmap pointer
+    munmap(ptr,size);
+    //close shared memory
+    if(shm_unlink(shm_name)==-1){
+        perror("A-Can't unlink shared memory");
+    }
+    //close semaphore
+    sem_close(sem_id1);
+    sem_close(sem_id2);
+    sem_unlink(SEM_PATH_1);
+    sem_unlink(SEM_PATH_1);
     return 0;
 }
