@@ -41,7 +41,6 @@ int main(int argc, char const *argv[])
     if(ptr<0){
         perror("B-error in mapping the shared memory:");
     }
-
     /*
     //to unmap the pointer
     if(mummap(ptr,size)==-1){
@@ -75,17 +74,28 @@ int main(int argc, char const *argv[])
         }
 
         else {
-            sprintf(&c.x, "%d", ptr);
+            sleep(2);
+            //controllare centro nuova bitmap
+            int x=atoi(ptr);
             ptr += sizeof(int);
-            sprintf(&c.y, "%d", ptr);
+            int y=atoi(ptr);
+            //printf("%d %d", c.x, c.y);
             ptr= mmap(0, size,PROT_READ, MAP_SHARED,shm_fd,0);
             if(ptr<0){
                 perror("B-error in mapping the shared memory:");
             }
-            //controllare centro nuova bitmapa
             //se diverso
+            if(x!=c.x || y != c.y){
                 //plotta nuovo punto e distanza dal vecchio
-            mvaddch(LINES/2, COLS/2, '0');
+                //dist_x=x-c_old.x;
+                //dist_y=y-c_old.y;
+                //plot dist
+                c.x=x;
+                c.y=y;
+            }
+            
+                
+            mvaddch(y, x, '-');
             refresh();
         }
     }
