@@ -21,7 +21,7 @@ typedef struct{
 const char* shm_name = "\bitmap";
 const int size=sizeof(center);
 int shm_fd;
-void *ptr;
+int *ptr;
 //semaphores
 sem_t * sem_id1;
 sem_t * sem_id2;
@@ -88,7 +88,7 @@ int main(int argc, char *argv[])
     }
     
     //pointer to reference the shared memory
-    ptr= mmap(0, size,PROT_WRITE, MAP_SHARED,shm_fd,0);
+    ptr= (int *)mmap(0, size,PROT_WRITE, MAP_SHARED,shm_fd,0);
     if(ptr<0){
         perror("A-error in mapping the shared memory:");
         exit(-1);
@@ -148,11 +148,11 @@ int main(int argc, char *argv[])
             c.y=get_y();
             sem_wait(sem_id1);
             //send new position of the center
-            sprintf(ptr,"%d", circle.x);
-            ptr += sizeof(int);
-            sprintf(ptr,"%d", circle.y);
+            ptr[0]=circle.x;
+            //ptr += sizeof(int);
+            ptr[1]=circle.y;
             sem_post(sem_id2);
-            ptr= mmap(0, size,PROT_WRITE, MAP_SHARED,shm_fd,0);
+            ptr= (int *)mmap(0, size,PROT_WRITE, MAP_SHARED,shm_fd,0);
             if(ptr<0){
                 perror("A-error in mapping the shared memory:");
             }

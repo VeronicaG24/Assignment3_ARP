@@ -20,7 +20,7 @@ typedef struct{
 const char* shm_name = "\bitmap";
 const int size=sizeof(int); //1600x600x4
 int shm_fd;
-void *ptr;
+int *ptr;
 //semaphores
 sem_t * sem_id1;
 sem_t * sem_id2;
@@ -85,7 +85,7 @@ int main(int argc, char const *argv[])
     }
     
     //pointer to reference the shared memory
-    ptr= mmap(0, size,PROT_READ, MAP_SHARED,shm_fd,0);
+    ptr= (int *)mmap(0, size,PROT_READ, MAP_SHARED,shm_fd,0);
     if(ptr<0){
         perror("B-error in mapping the shared memory:");
         exit(-1);
@@ -115,12 +115,12 @@ int main(int argc, char const *argv[])
         else {
             sem_wait(sem_id2);
             //controllare centro nuova bitmap
-            int x=atoi(ptr);
-            ptr += sizeof(int);
-            int y=atoi(ptr);
+            int x=ptr[0];
+            //ptr += sizeof(int);
+            int y=ptr[1];
             sem_post(sem_id1);
             //printf("%d %d", c.x, c.y);
-            ptr= mmap(0, size,PROT_READ, MAP_SHARED,shm_fd,0);
+            ptr= (int *)mmap(0, size,PROT_READ, MAP_SHARED,shm_fd,0);
             if(ptr<0){
                 perror("B-error in mapping the shared memory:");
             }

@@ -165,10 +165,3 @@ void reset_console_ui() {
     draw_side_ui();
 }
 
-//funcion write by me to get x and y 
-int get_x(){
-	return circle.x;
-}
-int get_y(){
-	return circle.y;
-}
