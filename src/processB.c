@@ -27,6 +27,9 @@ sem_t * sem_id2;
 //signal handler
 void sig_handler(int signo){
     if(signo==SIGINT){
+        printf("B-received SIGINT!");
+        fflush(stdout);
+        sleep(5);
         //close semaphore
         sem_close(sem_id1);
         sem_close(sem_id2);
