@@ -27,10 +27,9 @@ sem_t * sem_id1;
 sem_t * sem_id2;
 //signal handler
 void sig_handler(int signo){
-    if(signo==SIGINT){
+    if(signo==SIGINT || signo==SIGTERM){
         printf("A-received SIGINT!");
         fflush(stdout);
-        sleep(5);
         //close semaphore
         sem_close(sem_id1);
         sem_close(sem_id2);
@@ -42,11 +41,18 @@ void sig_handler(int signo){
         //close shared memory
         if(shm_unlink(shm_name)==-1){
         perror("A-Can't unlink shared memory");
-        }
-        if(signal(SIGINT, sig_handler)==SIG_ERR) {
-        perror("A-Can't set the signal handler for SIGINT\n");
         exit(-1);
         }
+
+        exit(0);
+    }
+    if(signal(SIGINT, sig_handler)==SIG_ERR) {
+        perror("A-Can't set the signal handler for SIGINT\n");
+        exit(-1);
+    }
+    if(signal(SIGTERM, sig_handler)==SIG_ERR) {
+        perror("A-Can't set the signal handler for SIGTERM\n");
+        exit(-1);
     }
 }   
 
@@ -62,6 +68,10 @@ int main(int argc, char *argv[])
         perror("A-Can't set the signal handler for SIGINT\n");
         exit(-1);
     }
+    if(signal(SIGTERM, sig_handler)==SIG_ERR) {
+        perror("A-Can't set the signal handler for SIGTERM\n");
+        exit(-1);
+    }
     //bitmap locale
 
     //shared memory
@@ -69,6 +79,7 @@ int main(int argc, char *argv[])
     shm_fd=shm_open(shm_name, O_CREAT|O_RDWR, 0666);
     if(shm_fd==-1){
         perror("A-error in open the shared memory:");
+        exit(-1);
     }
     
     //set the shared memory on the right dimension
@@ -80,6 +91,7 @@ int main(int argc, char *argv[])
     ptr= mmap(0, size,PROT_WRITE, MAP_SHARED,shm_fd,0);
     if(ptr<0){
         perror("A-error in mapping the shared memory:");
+        exit(-1);
     }
 
 
@@ -136,9 +148,9 @@ int main(int argc, char *argv[])
             c.y=get_y();
             sem_wait(sem_id1);
             //send new position of the center
-            sprintf(ptr,"%d", c.x);
+            sprintf(ptr,"%d", circle.x);
             ptr += sizeof(int);
-            sprintf(ptr,"%d", c.y);
+            sprintf(ptr,"%d", circle.y);
             sem_post(sem_id2);
             ptr= mmap(0, size,PROT_WRITE, MAP_SHARED,shm_fd,0);
             if(ptr<0){

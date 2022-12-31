@@ -18,7 +18,7 @@ typedef struct{
 }center;
 //shared memory
 const char* shm_name = "\bitmap";
-const int size=sizeof(int); //1600x600x3
+const int size=sizeof(int); //1600x600x4
 int shm_fd;
 void *ptr;
 //semaphores
@@ -26,10 +26,9 @@ sem_t * sem_id1;
 sem_t * sem_id2;
 //signal handler
 void sig_handler(int signo){
-    if(signo==SIGINT){
+    if(signo==SIGINT || signo==SIGTERM){
         printf("B-received SIGINT!");
         fflush(stdout);
-        sleep(5);
         //close semaphore
         sem_close(sem_id1);
         sem_close(sem_id2);
@@ -41,12 +40,19 @@ void sig_handler(int signo){
         //close shared memory
         if(shm_unlink(shm_name)==-1){
         perror("B-Can't unlink shared memory");
+        exit(-1);
         }
-        if(signal(SIGINT, sig_handler)==SIG_ERR) {
+        exit(0);
+        
+    }
+    if(signal(SIGINT, sig_handler)==SIG_ERR) {
         perror("B-Can't set the signal handler for SIGINT\n");
         exit(-1);
         }
-    }
+    if(signal(SIGTERM, sig_handler)==SIG_ERR) {
+        perror("A-Can't set the signal handler for SIGTERM\n");
+        exit(-1);
+        }
 }
 
 int main(int argc, char const *argv[])
@@ -62,6 +68,10 @@ int main(int argc, char const *argv[])
         perror("B-Can't set the signal handler for SIGINT\n");
         exit(-1);
     }
+    if(signal(SIGTERM, sig_handler)==SIG_ERR) {
+        perror("A-Can't set the signal handler for SIGTERM\n");
+        exit(-1);
+    }
     //creare bitmap locale
 
     //old center
@@ -71,12 +81,14 @@ int main(int argc, char const *argv[])
     shm_fd=shm_open(shm_name, O_RDONLY, 0666);
     if(shm_fd==-1){
         perror("B-error in open the shared memory:");
+        exit(-1);
     }
     
     //pointer to reference the shared memory
     ptr= mmap(0, size,PROT_READ, MAP_SHARED,shm_fd,0);
     if(ptr<0){
         perror("B-error in mapping the shared memory:");
+        exit(-1);
     }
 
     //semafori
