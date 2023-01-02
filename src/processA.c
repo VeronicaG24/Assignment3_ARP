@@ -125,15 +125,6 @@ int main(int argc, char *argv[])
         perror("A-error in mapping the shared memory:");
         exit(-1);
     }
-
-
-    
-    /*
-    //to close the shared memory 
-    if(shm_unlink(shm_fd)==-1){
-        perror("A-Can't unlink shared memory");
-    };*/
-    
     
     //semaforo
     sem_id1 = sem_open(SEM_PATH_1, O_CREAT, S_IRUSR | S_IWUSR, 1);
