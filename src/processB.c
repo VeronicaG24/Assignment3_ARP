@@ -15,15 +15,33 @@
 
 typedef struct{
     int x, y;
-}center;
+} center;
+
+center c;
 //shared memory
 const char* shm_name = "\bitmap";
 const int size=sizeof(int); //1600x600x4
 int shm_fd;
-int *ptr;
+rgb_pixel_t *ptr;
 //semaphores
 sem_t * sem_id1;
 sem_t * sem_id2;
+// Data structure for storing the bitmap file
+bmpfile_t *bmp;
+// Data type for defining pixel colors (BGRA)
+rgb_pixel_t pixel = {255, 0, 0, 0};
+/* Instantiate bitmap, passing three parameters:
+*   - width of the image (in pixels)
+*   - Height of the image (in pixels)
+*   - Depth of the image (1 for greyscale images, 4 for colored images)
+*/
+int width = 1600;
+int height = 600;
+int depth = 4;
+
+//raggio cerchio
+int radius = 20;
+
 //signal handler
 void sig_handler(int signo){
     if(signo==SIGINT || signo==SIGTERM){
@@ -55,15 +73,38 @@ void sig_handler(int signo){
         }
 }
 
+void draw_bmp(int xc, int yc) {
+    bmp_destroy(bmp);
+    bmp = bmp_create(width, height, depth);
+    for(int x = -radius; x <= radius; x++) {
+        for(int y = -radius; y <= radius; y++) {
+      // If distance is smaller, point is within the circle
+      if(sqrt(x*x + y*y) < radius) {
+          /*
+          * Color the pixel at the specified (x,y) position
+          * with the given pixel values
+          */
+          bmp_set_pixel(bmp, xc + x, yc + y, pixel);
+      }
+    }
+  }
+}
+
 int main(int argc, char const *argv[])
 {
+    //pointer center
+    center *c_old;
+    int num_center = 0;
+
     // Utility variable to avoid trigger resize event on launch
     int first_resize = TRUE;
-    center c;
+    
     c.y=LINES/2;
     c.x=COLS/2;
+    c_old[num_center] = c;
     // Initialize UI
     init_console_ui();
+
     if(signal(SIGINT, sig_handler)==SIG_ERR) {
         perror("B-Can't set the signal handler for SIGINT\n");
         exit(-1);
@@ -72,7 +113,10 @@ int main(int argc, char const *argv[])
         perror("A-Can't set the signal handler for SIGTERM\n");
         exit(-1);
     }
+
     //creare bitmap locale
+    bmp = bmp_create(width, height, depth);
+    draw_bmp(0,0);
 
     //old center
 
@@ -85,7 +129,7 @@ int main(int argc, char const *argv[])
     }
     
     //pointer to reference the shared memory
-    ptr= (int *)mmap(0, size,PROT_READ, MAP_SHARED,shm_fd,0);
+    ptr= (rgb_pixel_t *)mmap(0, size,PROT_READ, MAP_SHARED,shm_fd,0);
     if(ptr<0){
         perror("B-error in mapping the shared memory:");
         exit(-1);
@@ -96,7 +140,6 @@ int main(int argc, char const *argv[])
     sem_id2 = sem_open(SEM_PATH_2, O_CREAT, S_IRUSR | S_IWUSR, 1);
     // Infinite loop
     while (TRUE) {
-
         // Get input in non-blocking mode
         int cmd = getch();
         
@@ -113,27 +156,63 @@ int main(int argc, char const *argv[])
         }
 
         else {
+            int count = 0;
+
             sem_wait(sem_id2);
             //controllare centro nuova bitmap
-            int x=ptr[0];
-            //ptr += sizeof(int);
-            int y=ptr[1];
-            sem_post(sem_id1);
-            //printf("%d %d", c.x, c.y);
-            ptr= (int *)mmap(0, size,PROT_READ, MAP_SHARED,shm_fd,0);
-            if(ptr<0){
-                perror("B-error in mapping the shared memory:");
+            for (int i=0; i<599; i++) {
+                for (int j=0; j<1599; j++) {
+                    rgb_pixel_t read = ptr[(1600*i)+j];
+                    if(read.alpha == pixel.alpha && read.green == pixel.green && read.blue == pixel.blue && read.red == pixel.red) {
+                        count += 1;
+                    }
+                    if(count == (radius*2)) {
+                        c.x = (j-radius);
+                        c.y = i;
+                        break;
+                    }
+                }
+
+                if(count == (radius*2)) {
+                    break;
+                }   
             }
+            sem_post(sem_id1);
+
+            //printf("%d %d", c.x, c.y);
+            //ptr = (rgb_pixel_t *)mmap(0, size, PROT_READ, MAP_SHARED,shm_fd,0);
+            //if(ptr<0) {
+            //    perror("B-error in mapping the shared memory:");
+            //}
+
             //se diverso
-            if(x!=c.x || y != c.y){
-                //plotta nuovo punto e distanza dal vecchio
-                //dist_x=x-c_old.x;
-                //dist_y=y-c_old.y;
-                //plot dist
-                mvaddch(y, x, '0');
-                //update c
-                c.x=x;
-                c.y=y;
+            if(c_old[num_center].x != c.x || c_old[num_center].y != c.y) {
+                
+                num_center += 1;
+                c_old[num_center] = c;
+                int x = c_old[num_center-1].x;
+                int y = c_old[num_center-1].y;
+
+                while(x != c_old[num_center].x) {
+                    if(x < c_old[num_center].x) {
+                        x += 1;
+                        mvaddch(y, x, '0');
+                    }
+                    else {
+                        x -= 1;
+                        mvaddch(y, x, '0');
+                    }
+                }
+                while(y != c_old[num_center].y) {
+                    if(y < c_old[num_center].y) {
+                        y += 1;
+                        mvaddch(y, x, '0');
+                    }
+                    else {
+                        y -= 1;
+                        mvaddch(y, x, '0');
+                    }
+                }
             }   
             refresh();
         }
