@@ -1,31 +1,72 @@
-# ARP-Assignment2
+# ARP-Hoist-Assignment
 Base repository for the **second ARP assignment**.
 The project provides you with a base infrastructure for the implementation of the simulated vision system through shared memory, according to the requirements specified in the PDF file of the assignment.
 
-The two processes involved in the simulation of the vision system, namely **processA** and **processB**, are implemented as simple *ncurses windows*. The development of the inter-process communication pipeline, that is the shared memory, is left to you.
+The two processes involved in the simulation of the vision system, namely **processA** and **processB**, are implemented as simple *ncurses windows*. 
 
-As for the first assignment, you also find a **master** process already prepared for you, responsible of spawning the entire simulation.
+The project provides the basic functionalities for the **processA** and **processB**, both of which are implemented through the *ncurses library* as simple GUIs. In particular, the repository is organized as follows:
+- The `src` folder contains the source code for the Command console, Inspection console and Master, MotorX, MotorZ, World and watchdog processes.
+- The `include` folder contains all the data structures and methods used within the ncurses framework to build the two GUIs. 
+- The `bin` folder is where the executable files are expected to be after compilation.
+- The `out` folder
+- The `compile.sh` and `run.sh` to copile and run the project.
+- The `install.md` with the instruction for installing the necessary for running the code.
+- The `logFile.log` file cointains what is hapening during the execution.
 
-Additionally, I have prepared a simple program called **circle.c**, which shows you the basic functionalities of the *libbitmap* library. Please, note that the **circle.c** process must not appear in your final project. It is simply meant to be a guide for you on how to use the bitmap library, therefore you will need to properly use portions of that code in **processA** and **processB** in order to develop your solution.
+## How to run
+To run the program it is necessary to download the repository:
+```console
+git clone https://github.com/VeronicaG24/Assignment2_ARP.git
+```
 
-## *libbitmap* installation and usage
-To work with the bitmap library, you need to follow these steps:
-1. Download the source code from [this GitHub repo](https://github.com/draekko/libbitmap.git) in your file system.
-2. Navigate to the root directory of the downloaded repo and run the configuration through command ```./configure```. Configuration might take a while.  While running, it prints some messages telling which features it is checking for.
-3. Type ```make``` to compile the package.
-4. Run ```make install``` to install the programs and any data files and documentation.
-5. Upon completing the installation, check that the files have been properly installed by navigating to ```/usr/local/lib```, where you should find the ```libbmp.so``` shared library ready for use.
-6. In order to properly compile programs which use the *libbitmap* library, you first need to notify the **linker** about the location of the shared library. To do that, you can simply add the following line at the end of your ```.bashrc``` file:      
-```export LD_LIBRARY_PATH="/usr/local/lib:$LD_LIBRARY_PATH"```
-### Using *libbitmap* in your code
-Now that you have properly installed the library in your system, it's time to use it in your programs:
-1. Include the library in your programs via ```#include <bmpfile.h>```. If you want to check the content of ```bmpfile.h``` to glimpse the functionalities of the library, navigate to ```/usr/local/include```, where the header file should be located.
-2. Compile programs which use the *libbitmap* library by linking the shared library with the ```-lbmp``` command.     
-Example for compiling **circle.c**: ```gcc src/circle.c -lbmp -lm -o bin/circle``` 
+If there is no `bin` folder in the local repository, create one.
 
-## Compiling and running **processA** and **processB**
-The two processes are implemented as UIs through *ncurses* library, therefore you need to compile their source files by linking the shared library via ```-lncurses```. As for the first assignment, exploit the resize event of the windows to get out of situations in which the graphical elements do not properly spawn.
+Then, move into the folder and compile the code using:
+```console
+bash ./compile.sh
+```
+And run it:
+```console
+bash ./run.sh
+```
 
-## Executing **circle.c**
-This is a simple example of a program which uses the *libbitmap* library. It generates a 100x100 colored `.bmp` file with user-defined name, depicting a blue circle of given radius. When you execute it, pass the two arguments (file name and radius value) along. Execution example: ```./bin/circle out/test.bmp 20```.
+## Description of the code
+The code is divided into 4 processes: ProcessA, ProcessB, circle and Master In each of the process, signal are manage through signal handler.
+
+### Master
+The master program manages the pipes, spawns the other processes, create the Log File and waits until one of the process closes to kill all the other process and unlink the pipes.
+
+The pipes used are:
+- MotorX-World
+- MotorZ-World
+- World-Inspection console
+- Command console-MotorX
+- Command console-MotorZ
+
+### MotorX and MotorZ
+MotorX and MotorZ manage the motion along x-axis and z-axis. These two processes are equivalent except for the direction of the motion: the pipe with the Command console is open in reading mode with non-blocking to avoind error if the pipe is not already opened in writing on the other side, and the pipe with the World is opened in writing mode.
+After opening the pipes, an infinite loop starts to continuosly read from the pipe the new velocity and update the position.
+
+### World
+World manages the position of the hoist. First, it opens the pipe with MotorX and MotorZ in reading mode with non-blocking, and with Inspection Console in writing mode. Then, an infinite loop starts to continuasly read from the pipe of the two motors the updated position of the hoist and, if it is different from the previous one (considering a random error bitween -0.05 and +0.05), it updates the new position and write it to the Inspection Console.
+
+### Command Console
+The Command Console manage the interface for the velocities of the two motors. It has 6 button to increase/decrease the velocities along x-axis and z-axis and two buttons to stop the two motors. 
+One pipe is open with the Inspection console to comunicate its pid, otherwise it is not possible to manage the signal in the correct way.
+The Command console also opens the pipe with the two motors in writing mode and then an infinite loop starts. In the loop are continusly checked if any button is pressed, when one of them is pressed the velocity is updated and written on pipe of the corresponding motor. Here are also manage the signal for stopping mode and resetting mode sent by the Inspection console: in case of stop signal the velocity of both motors is set to 0 until another button is pressed, in case of reset signal the velocity of both motors are first set to zero and then the command blocked until the reset routine is ended (so, until the hoist goes back to origin position).
+
+### Inspection Console
+The Inspection Console manage the interface of the hoist, showing how it moves, and the stop and reset buttons. First, the pipes with the Command console and World are opened in non-blocking reading mode, !!aggiungi parte per leggere il pid della command". Then, an infinite loop starts to continuosly check if the reset or the stop button has been pressed and update the position on the interface.
+If the stop or reset button is pressed, different signals are sent to MotorX, MotorZ and Command console.
+
+### Watchdog 
+The Warchdog process checks the inactivity of the program through the log file. It continuosly check the number of bytes written on the log file and if it does not chenge for more than 60 second, it kills all the processes including itself.
+
+The log file is updated each time occurs one of the following event:
+- from MotorX and MotorZ: its position changes
+- from World: the coordinates of the hoist are changed
+- from Command Console: each time a button is pressed
+- from Inspection Console: each time the stop button or the reset button is pressed
+- from Watchdog: when an inactivity is detected
+
 
