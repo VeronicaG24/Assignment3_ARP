@@ -73,23 +73,6 @@ void sig_handler(int signo){
         }
 }
 
-void draw_bmp(int xc, int yc) {
-    bmp_destroy(bmp);
-    bmp = bmp_create(width, height, depth);
-    for(int x = -radius; x <= radius; x++) {
-        for(int y = -radius; y <= radius; y++) {
-      // If distance is smaller, point is within the circle
-      if(sqrt(x*x + y*y) < radius) {
-          /*
-          * Color the pixel at the specified (x,y) position
-          * with the given pixel values
-          */
-          bmp_set_pixel(bmp, xc + x, yc + y, pixel);
-      }
-    }
-  }
-}
-
 int main(int argc, char const *argv[])
 {
     //pointer center
@@ -98,13 +81,14 @@ int main(int argc, char const *argv[])
 
     // Utility variable to avoid trigger resize event on launch
     int first_resize = TRUE;
+
+    // Initialize UI
+    init_console_ui();
     
     c.y=LINES/2;
     c.x=COLS/2;
     c_old[num_center] = c;
-    // Initialize UI
-    init_console_ui();
-
+    
     if(signal(SIGINT, sig_handler)==SIG_ERR) {
         perror("B-Can't set the signal handler for SIGINT\n");
         exit(-1);
@@ -113,12 +97,6 @@ int main(int argc, char const *argv[])
         perror("A-Can't set the signal handler for SIGTERM\n");
         exit(-1);
     }
-
-    //creare bitmap locale
-    bmp = bmp_create(width, height, depth);
-    draw_bmp(0,0);
-
-    //old center
 
     //shared memory
     //open the shared memery
