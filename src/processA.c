@@ -21,10 +21,23 @@ typedef struct{
 const char* shm_name = "\bitmap";
 const int size=sizeof(center);
 int shm_fd;
-int *ptr;
+rgb_pixel_t *ptr;
 //semaphores
 sem_t * sem_id1;
 sem_t * sem_id2;
+
+//bimap
+// Data structure for storing the bitmap file
+bmpfile_t *bmp;
+// Data type for defining pixel colors (BGRA)
+rgb_pixel_t pixel = {255, 0, 0, 0};
+//size of bitmap
+int width = 1600;
+int height = 600;
+int depth = 4;
+
+//raggio cerchio
+int radius = 20;
 //signal handler
 void sig_handler(int signo){
     if(signo==SIGINT || signo==SIGTERM){
@@ -54,13 +67,31 @@ void sig_handler(int signo){
         perror("A-Can't set the signal handler for SIGTERM\n");
         exit(-1);
     }
-}   
+}
+
+void draw_bmp(int xc, int yc){
+bmp_destroy(bmp);
+bmp = bmp_create(width, height, depth);
+for(int x = -radius; x <= radius; x++) {
+    for(int y = radius; y <= radius; y++) {
+      // If distance is smaller, point is within the circle
+      if(sqrt(x*x + y*y) < radius) {
+          /*
+          * Color the pixel at the specified (x,y) position
+          * with the given pixel values
+          */
+          bmp_set_pixel(bmp, xc+ x, yc + y, pixel);
+      }
+    }
+  }
+
+}
 
 int main(int argc, char *argv[])
 {
     // Utility variable to avoid trigger resize event on launch
     int first_resize = TRUE;
-    center c;
+    
     // Initialize UI
     init_console_ui();
 
@@ -73,7 +104,8 @@ int main(int argc, char *argv[])
         exit(-1);
     }
     //bitmap locale
-
+    bmp = bmp_create(width, height, depth);
+    draw_bmp(0,0);
     //shared memory
     //open the shared memery
     shm_fd=shm_open(shm_name, O_CREAT|O_RDWR, 0666);
@@ -88,7 +120,7 @@ int main(int argc, char *argv[])
     }
     
     //pointer to reference the shared memory
-    ptr= (int *)mmap(0, size,PROT_WRITE, MAP_SHARED,shm_fd,0);
+    ptr= (rgb_pixel_t *)mmap(0, size,PROT_WRITE, MAP_SHARED,shm_fd,0);
     if(ptr<0){
         perror("A-error in mapping the shared memory:");
         exit(-1);
@@ -144,24 +176,23 @@ int main(int argc, char *argv[])
         else if(cmd == KEY_LEFT || cmd == KEY_RIGHT || cmd == KEY_UP || cmd == KEY_DOWN) {
             move_circle(cmd);
             draw_circle();
-            c.x=get_x();
-            c.y=get_y();
+            //disegna cerchio nella bitmap
+            draw_bmp(circle.x, circle.y);
+            //copia in shared memory
             sem_wait(sem_id1);
             //send new position of the center
-            ptr[0]=circle.x;
-            //ptr += sizeof(int);
-            ptr[1]=circle.y;
+            for(int i=0; i<=599; i++){
+                for (int j=0; j<=1599; i++){
+                    int index=(1600*i)+j;
+                    ptr[index]=bmp_get_pixel(bmp,j,i)[0];
+                } 
+            }
             sem_post(sem_id2);
-            ptr= (int *)mmap(0, size,PROT_WRITE, MAP_SHARED,shm_fd,0);
+            /*
+            ptr= (rgb_pixel_t *)mmap(0, size,PROT_WRITE, MAP_SHARED,shm_fd,0);
             if(ptr<0){
                 perror("A-error in mapping the shared memory:");
-            }
-            //sleep(1);
-            //printf("%d, %d", get_x(), get_y());
-            //fflush(stdout);
-            //cancella vecchia bitmap
-            //disegna nuovo cerchio con centro in posizione monitor
-            //copia in shared memory
+            }*/
         }
     }
     
