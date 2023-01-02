@@ -19,7 +19,7 @@ typedef struct{
 }center;
 //shared memory
 const char* shm_name = "\bitmap";
-const int size=sizeof(center);
+const int size=1600*600*sizeof(rgb_pixel_t);
 int shm_fd;
 rgb_pixel_t *ptr;
 //semaphores
