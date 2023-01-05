@@ -91,6 +91,7 @@ int main(int argc, char const *argv[])
     c_old[num_center].x = c.x;
     c_old[num_center].y = c.y;
     
+    
     if(signal(SIGINT, sig_handler)==SIG_ERR) {
         perror("B-Can't set the signal handler for SIGINT\n");
         exit(-1);

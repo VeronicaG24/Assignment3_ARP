@@ -37,7 +37,7 @@ int height = 600;
 int depth = 4;
 
 //raggio cerchio
-int radius = 20;
+int radius = 30;
 //signal handler
 void sig_handler(int signo){
     if(signo==SIGINT || signo==SIGTERM){
@@ -115,9 +115,9 @@ int main(int argc, char *argv[])
     }
     
     //set the shared memory on the right dimension
-    /*if(ftruncate(shm_fd,size)==-1){
+    if(ftruncate(shm_fd,size)==-1){
         perror("A-error in truncate the shared memory");
-    }*/
+    }
     
     //pointer to reference the shared memory
     ptr= (rgb_pixel_t *)mmap(0, size,PROT_WRITE, MAP_SHARED,shm_fd,0);
@@ -173,13 +173,13 @@ int main(int argc, char *argv[])
             sem_wait(sem_id1);
             //send new position of the center
             for(int i=0; i<=599; i++){
-                for (int j=0; j<=1599; i++){
+                for (int j=0; j<=1599; j++){
                     int index=(1600*i)+j;
                     rgb_pixel_t * read = bmp_get_pixel(bmp,j,i);
-                    ptr[index].alpha=read[0].alpha;
-                    ptr[index].blue=read[0].blue;
-                    ptr[index].green=read[0].green;
-                    ptr[index].red=read[0].red;
+                    ptr[index].alpha=read->alpha;
+                    ptr[index].blue=read->blue;
+                    ptr[index].green=read->green;
+                    ptr[index].red=read->red;
                 } 
             }
             sem_post(sem_id2);
