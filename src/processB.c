@@ -75,19 +75,21 @@ void sig_handler(int signo){
 
 int main(int argc, char const *argv[])
 {
-    //pointer center
-    center *c_old;
-    int num_center = 0;
 
     // Utility variable to avoid trigger resize event on launch
     int first_resize = TRUE;
 
     // Initialize UI
     init_console_ui();
-    
+
+    //pointer center
+    center * c_old;
+    int num_center = 0;
     c.y=LINES/2;
     c.x=COLS/2;
-    c_old[num_center] = c;
+    c_old = (center *) malloc(sizeof(center));
+    c_old[num_center].x = c.x;
+    c_old[num_center].y = c.y;
     
     if(signal(SIGINT, sig_handler)==SIG_ERR) {
         perror("B-Can't set the signal handler for SIGINT\n");
@@ -105,17 +107,17 @@ int main(int argc, char const *argv[])
         perror("B-error in open the shared memory:");
         exit(-1);
     }
-    
+
     //pointer to reference the shared memory
     ptr= (rgb_pixel_t *)mmap(0, size,PROT_READ, MAP_SHARED,shm_fd,0);
     if(ptr<0){
         perror("B-error in mapping the shared memory:");
         exit(-1);
     }
-
     //semafori
-    sem_id1 = sem_open(SEM_PATH_1, O_CREAT, S_IRUSR | S_IWUSR, 1);
-    sem_id2 = sem_open(SEM_PATH_2, O_CREAT, S_IRUSR | S_IWUSR, 1);
+    sem_id1 = sem_open(SEM_PATH_1, 0);
+    sem_id2 = sem_open(SEM_PATH_2, 0);
+
     // Infinite loop
     while (TRUE) {
         // Get input in non-blocking mode
@@ -135,7 +137,6 @@ int main(int argc, char const *argv[])
 
         else {
             int count = 0;
-
             sem_wait(sem_id2);
             //controllare centro nuova bitmap
             for (int i=0; i<599; i++) {
@@ -167,7 +168,8 @@ int main(int argc, char const *argv[])
             if(c_old[num_center].x != c.x || c_old[num_center].y != c.y) {
                 
                 num_center += 1;
-                c_old[num_center] = c;
+                c_old[num_center].x = c.x;
+                c_old[num_center].y = c.y;
                 int x = c_old[num_center-1].x;
                 int y = c_old[num_center-1].y;
 

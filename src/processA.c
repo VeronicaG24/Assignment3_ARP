@@ -115,9 +115,9 @@ int main(int argc, char *argv[])
     }
     
     //set the shared memory on the right dimension
-    if(ftruncate(shm_fd,size)==-1){
+    /*if(ftruncate(shm_fd,size)==-1){
         perror("A-error in truncate the shared memory");
-    }
+    }*/
     
     //pointer to reference the shared memory
     ptr= (rgb_pixel_t *)mmap(0, size,PROT_WRITE, MAP_SHARED,shm_fd,0);
@@ -175,7 +175,11 @@ int main(int argc, char *argv[])
             for(int i=0; i<=599; i++){
                 for (int j=0; j<=1599; i++){
                     int index=(1600*i)+j;
-                    ptr[index]=bmp_get_pixel(bmp,j,i)[0];
+                    rgb_pixel_t * read = bmp_get_pixel(bmp,j,i);
+                    ptr[index].alpha=read[0].alpha;
+                    ptr[index].blue=read[0].blue;
+                    ptr[index].green=read[0].green;
+                    ptr[index].red=read[0].red;
                 } 
             }
             sem_post(sem_id2);
