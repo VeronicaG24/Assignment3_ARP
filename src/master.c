@@ -31,7 +31,9 @@ int main() {
   char * arg_list_B[] = { "/usr/bin/konsole", "-e", "./bin/processB", NULL };
 
   pid_t pid_procA = spawn("/usr/bin/konsole", arg_list_A);
+  sleep(1);
   pid_t pid_procB = spawn("/usr/bin/konsole", arg_list_B);
+  sleep(1);
 
   int status;
   waitpid(pid_procB, &status, 0);
