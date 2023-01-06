@@ -32,7 +32,7 @@ DESCRIPTION
 #define SEM_PATH_1 "/sem_w"
 #define SEM_PATH_2 "/sem_r"
 
-//struct for center
+//struct for center coordinates
 typedef struct {
     int x, y;
 } center;
@@ -84,8 +84,7 @@ void sig_handler(int signo){
         // unmmap pointer shared memory
         munmap(ptr, size);
         // close shared memory
-        if (shm_unlink(shm_name) == -1)
-        {
+        if (shm_unlink(shm_name) == -1) {
             perror("A-Can't unlink shared memory");
             exit(-1);
         }
@@ -282,6 +281,6 @@ int main(int argc, char *argv[]) {
     sem_close(sem_id2);
     sem_unlink(SEM_PATH_1);
     sem_unlink(SEM_PATH_1);
-    
+
     return 0;
 }
