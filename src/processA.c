@@ -80,7 +80,7 @@ void draw_bmp(int xc, int yc)
     bmp = bmp_create(width, height, depth);
     for (int x = -radius; x <= radius; x++)
     {
-        for (int y = radius; y <= radius; y++)
+        for (int y = -radius; y <= radius; y++)
         {
             // If distance is smaller, point is within the circle
             if (sqrt(x * x + y * y) < radius)
@@ -188,7 +188,7 @@ int main(int argc, char *argv[])
             move_circle(cmd);
             draw_circle();
             // disegna cerchio nella bitmap
-            draw_bmp(circle.x, circle.y);
+            draw_bmp((circle.x)*20, (circle.y)*20);
             // copia in shared memory
             sem_wait(sem_id1);
             //send new position of the center
@@ -196,6 +196,7 @@ int main(int argc, char *argv[])
                 for (int j=0; j<=1599; j++){
                     int index=(1600*i)+j;
                     rgb_pixel_t * read = bmp_get_pixel(bmp,j,i);
+                    //printf("%d %d %d %d\n", read->alpha, read->green,read->blue, read->red);
                     ptr[index].alpha=read->alpha;
                     ptr[index].blue=read->blue;
                     ptr[index].green=read->green;

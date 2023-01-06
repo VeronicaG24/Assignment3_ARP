@@ -40,7 +40,7 @@ int height = 600;
 int depth = 4;
 
 //raggio cerchio
-int radius = 20;
+int radius = 30;
 
 //signal handler
 void sig_handler(int signo){
@@ -119,6 +119,7 @@ int main(int argc, char const *argv[])
     sem_id1 = sem_open(SEM_PATH_1, 0);
     sem_id2 = sem_open(SEM_PATH_2, 0);
 
+    mvaddch(c.y, c.x, '0');
     // Infinite loop
     while (TRUE) {
         // Get input in non-blocking mode
@@ -143,12 +144,14 @@ int main(int argc, char const *argv[])
             for (int i=0; i<599; i++) {
                 for (int j=0; j<1599; j++) {
                     rgb_pixel_t read = ptr[(1600*i)+j];
+                    //printf("%d %d %d %d\n", read.alpha, read.green,read.blue, read.red);
                     if(read.alpha == pixel.alpha && read.green == pixel.green && read.blue == pixel.blue && read.red == pixel.red) {
                         count += 1;
                     }
                     if(count == (radius*2)) {
-                        c.x = (j-radius);
-                        c.y = i;
+                        c.x = (j-radius)/20;
+                        c.y = i/20;
+                        //printf("found center %d %d\n", c.x, c.y);
                         break;
                     }
                 }
@@ -159,7 +162,7 @@ int main(int argc, char const *argv[])
             }
             sem_post(sem_id1);
 
-            //printf("%d %d", c.x, c.y);
+            //printf("new: %d %d\n old:%d %d", c.x, c.y,c_old[num_center].x, c_old[num_center].y);
             //ptr = (rgb_pixel_t *)mmap(0, size, PROT_READ, MAP_SHARED,shm_fd,0);
             //if(ptr<0) {
             //    perror("B-error in mapping the shared memory:");
@@ -167,7 +170,7 @@ int main(int argc, char const *argv[])
 
             //se diverso
             if(c_old[num_center].x != c.x || c_old[num_center].y != c.y) {
-                
+                //printf("different x or y");
                 num_center += 1;
                 c_old[num_center].x = c.x;
                 c_old[num_center].y = c.y;

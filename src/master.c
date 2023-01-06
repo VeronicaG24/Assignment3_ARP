@@ -35,6 +35,7 @@ int main() {
 
   int status;
   waitpid(pid_procB, &status, 0);
+  printf("process B terminate\n");
   waitpid(pid_procA, &status, 0);
   
   printf ("Main program exiting with status %d\n", status);
