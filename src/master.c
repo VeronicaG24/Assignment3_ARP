@@ -34,8 +34,8 @@ int main() {
   pid_t pid_procB = spawn("/usr/bin/konsole", arg_list_B);
 
   int status;
-  waitpid(pid_procA, &status, 0);
   waitpid(pid_procB, &status, 0);
+  waitpid(pid_procA, &status, 0);
   
   printf ("Main program exiting with status %d\n", status);
   return 0;

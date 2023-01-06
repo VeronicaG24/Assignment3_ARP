@@ -82,12 +82,12 @@ int main(int argc, char const *argv[])
     // Initialize UI
     init_console_ui();
 
-    //pointer center
-    center * c_old;
+    //center old
     int num_center = 0;
+    int max_num_center = 80*30;
+    center c_old[max_num_center];
     c.y=LINES/2;
     c.x=COLS/2;
-    c_old = (center *) malloc(sizeof(center));
     c_old[num_center].x = c.x;
     c_old[num_center].y = c.y;
     
@@ -110,7 +110,7 @@ int main(int argc, char const *argv[])
     }
 
     //pointer to reference the shared memory
-    ptr= (rgb_pixel_t *)mmap(0, size,PROT_READ, MAP_SHARED,shm_fd,0);
+    ptr = (rgb_pixel_t *)mmap(0, size,PROT_READ, MAP_SHARED,shm_fd,0);
     if(ptr<0){
         perror("B-error in mapping the shared memory:");
         exit(-1);
