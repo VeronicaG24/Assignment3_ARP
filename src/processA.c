@@ -115,7 +115,7 @@ int main(int argc, char *argv[])
     }
     // bitmap locale
     bmp = bmp_create(width, height, depth);
-    draw_bmp(0, 0);
+    draw_bmp((circle.x)*20,(circle.y)*20);
     // shared memory
     // open the shared memery
     shm_fd = shm_open(shm_name, O_CREAT | O_RDWR, 0666);
@@ -142,6 +142,22 @@ int main(int argc, char *argv[])
     sem_id2 = sem_open(SEM_PATH_2, O_CREAT, S_IRUSR | S_IWUSR, 1);
     sem_init(sem_id1, 1, 1); // initialized to 1
     sem_init(sem_id2, 1, 0); // initialized to 0
+
+    //send first bitmap
+    sem_wait(sem_id1);
+            //send new position of the center
+            for(int i=0; i<=599; i++){
+                for (int j=0; j<=1599; j++){
+                    int index=(1600*i)+j;
+                    rgb_pixel_t * read = bmp_get_pixel(bmp,j,i);
+                    //printf("%d %d %d %d\n", read->alpha, read->green,read->blue, read->red);
+                    ptr[index].alpha=read->alpha;
+                    ptr[index].blue=read->blue;
+                    ptr[index].green=read->green;
+                    ptr[index].red=read->red;
+                } 
+            }
+    sem_post(sem_id2);
 
     // Infinite loop
     while (TRUE)

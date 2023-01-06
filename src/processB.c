@@ -12,7 +12,7 @@
 
 #define SEM_PATH_1 "/sem_w"
 #define SEM_PATH_2 "/sem_r"
-
+#define max_num_center 80*30
 typedef struct{
     int x, y;
 } center;
@@ -42,6 +42,8 @@ int depth = 4;
 //raggio cerchio
 int radius = 30;
 
+
+center c_old[max_num_center];
 //signal handler
 void sig_handler(int signo){
     if(signo==SIGINT || signo==SIGTERM){
@@ -73,6 +75,53 @@ void sig_handler(int signo){
         }
 }
 
+void find_center(){
+int count =0;
+for (int i=0; i<599; i++) {
+    for (int j=0; j<1599; j++) {
+        rgb_pixel_t read = ptr[(1600*i)+j];
+        if(read.alpha == pixel.alpha && read.green == pixel.green && read.blue == pixel.blue && read.red == pixel.red) {
+            count += 1;
+        }
+        if(count == (radius*2)) {
+            c.x = (j-radius)/20;
+            c.y = i/20;
+            break;
+        }
+    }
+
+    if(count == (radius*2)) {
+        break;
+        }   
+    }
+}
+
+void draw_distance(int num_center){
+    int x = c_old[num_center-1].x;
+    int y = c_old[num_center-1].y;
+    //mvaddch(c.y, c.x, '0');
+    while(x != c_old[num_center].x) {
+        if(x < c_old[num_center].x) {
+            x += 1;
+            mvaddch(y, x, '0');
+        }
+        else {
+            x -= 1;
+            mvaddch(y, x, '0');
+        }
+    }
+    while(y != c_old[num_center].y) {
+        if(y < c_old[num_center].y) {
+            y += 1;
+            mvaddch(y, x, '0');
+        }
+        else {
+            y -= 1;
+            mvaddch(y, x, '0');
+        }
+    }   
+}
+
 int main(int argc, char const *argv[])
 {
 
@@ -84,13 +133,7 @@ int main(int argc, char const *argv[])
 
     //center old
     int num_center = 0;
-    int max_num_center = 80*30;
-    center c_old[max_num_center];
-    c.y=LINES/2;
-    c.x=COLS/2;
-    c_old[num_center].x = c.x;
-    c_old[num_center].y = c.y;
-    
+
     
     if(signal(SIGINT, sig_handler)==SIG_ERR) {
         perror("B-Can't set the signal handler for SIGINT\n");
@@ -119,6 +162,11 @@ int main(int argc, char const *argv[])
     sem_id1 = sem_open(SEM_PATH_1, 0);
     sem_id2 = sem_open(SEM_PATH_2, 0);
 
+    sem_wait(sem_id2);
+    find_center();
+    sem_post(sem_id1);
+    c_old[num_center].x = c.x;
+    c_old[num_center].y = c.y;
     mvaddch(c.y, c.x, '0');
     // Infinite loop
     while (TRUE) {
@@ -134,32 +182,15 @@ int main(int argc, char const *argv[])
             }
             else {
                 reset_console_ui();
+                for(int i=1; i<=num_center;i++){
+                    draw_distance(i);
+                }
             }
         }
 
         else {
-            int count = 0;
             sem_wait(sem_id2);
-            //controllare centro nuova bitmap
-            for (int i=0; i<599; i++) {
-                for (int j=0; j<1599; j++) {
-                    rgb_pixel_t read = ptr[(1600*i)+j];
-                    //printf("%d %d %d %d\n", read.alpha, read.green,read.blue, read.red);
-                    if(read.alpha == pixel.alpha && read.green == pixel.green && read.blue == pixel.blue && read.red == pixel.red) {
-                        count += 1;
-                    }
-                    if(count == (radius*2)) {
-                        c.x = (j-radius)/20;
-                        c.y = i/20;
-                        //printf("found center %d %d\n", c.x, c.y);
-                        break;
-                    }
-                }
-
-                if(count == (radius*2)) {
-                    break;
-                }   
-            }
+            find_center();
             sem_post(sem_id1);
 
             //printf("new: %d %d\n old:%d %d", c.x, c.y,c_old[num_center].x, c_old[num_center].y);
@@ -174,29 +205,7 @@ int main(int argc, char const *argv[])
                 num_center += 1;
                 c_old[num_center].x = c.x;
                 c_old[num_center].y = c.y;
-                int x = c_old[num_center-1].x;
-                int y = c_old[num_center-1].y;
-
-                while(x != c_old[num_center].x) {
-                    if(x < c_old[num_center].x) {
-                        x += 1;
-                        mvaddch(y, x, '0');
-                    }
-                    else {
-                        x -= 1;
-                        mvaddch(y, x, '0');
-                    }
-                }
-                while(y != c_old[num_center].y) {
-                    if(y < c_old[num_center].y) {
-                        y += 1;
-                        mvaddch(y, x, '0');
-                    }
-                    else {
-                        y -= 1;
-                        mvaddch(y, x, '0');
-                    }
-                }
+                draw_distance(num_center);
             }   
             refresh();
         }
