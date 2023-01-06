@@ -1,18 +1,18 @@
-/*===========================================================================
------------------------------------------------------------------------------
+/*==============================================================================
+--------------------------------------------------------------------------------
   	processB.c
------------------------------------------------------------------------------
+--------------------------------------------------------------------------------
 
 AUTHOR: Written by Francesca Corrao and Veronica Gavagna.
 
------------------------------------------------------------------------------
+--------------------------------------------------------------------------------
 
 DESCRIPTION
-  	ProcessB reads from the shared memory and update its local bitmap. 
+  	ProcessB reads from the shared memory and look for the center of the circle. 
     If the center of the circle is changed, it plots the new position 
     of the center of the circle.
 
-=============================================================================*/
+================================================================================*/
 
 #include "./../include/processB_utilities.h"
 #include <bmpfile.h>
@@ -48,8 +48,6 @@ rgb_pixel_t *ptr;
 sem_t * sem_id1;
 sem_t * sem_id2;
 
-// Data structure for storing the bitmap file
-bmpfile_t *bmp;
 // Data type for defining pixel colors (BGRA)
 rgb_pixel_t pixel = {255, 0, 0, 0};
 
@@ -179,9 +177,9 @@ void draw_distance(int num_center) {
 
 /*=====================================
   Reads from the shared memory, 
-  update its local bitmap, 
-  Plots the new position of the center 
-  of the circle
+  look for the center of the circle, 
+  plots the new position of the center 
+  of the circle.
   RETURN:
     0 when exit
 =====================================*/
@@ -288,6 +286,6 @@ int main(int argc, char const *argv[]) {
     sem_close(sem_id2);
     sem_unlink(SEM_PATH_1);
     sem_unlink(SEM_PATH_1);
-    
+
     return 0;
 }
