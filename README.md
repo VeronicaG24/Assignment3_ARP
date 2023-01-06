@@ -31,16 +31,16 @@ bash ./run.sh
 ```
 
 ## Description of the code
-The code is divided into 4 processes: ProcessA, ProcessB, and Master. In each of the process, signal are manage through signal handler.
+The code is divided into 4 processes: ProcessA, ProcessB, and Master. In each of the process, signals are manage through signal handler.
 
 ### Master
-The master program spawns the other processes, and waits until one of the process closes to kill all the other process.
+The master program spawns the other processes, and waits until the two processes close to exit.
 
 ### ProcessA
-ProcessA manage the movement of the circle due to the pression of the arrow button, update the shared memory and if you press the button "P" it prints/saves the bitmap with the circle as a ".bmp" file.
+ProcessA manages the movement of the circle due to the pression of the arrow button on the keybpard, update the shared memory and if you press the button "P" it prints/saves the bitmap with the circle as a ".bmp" file.
 
 ### ProcessB
-ProcessB reads from the shared memory and update its local bitmap. If the center of the circle is changed, it plots the new position of the circle.
+ProcessB reads from the shared memory and look for the center. If the center of the circle is changed, it plots the new position of the circle.
 
 
 //CIRCLE non ci deve essere alla fine!! 
