@@ -135,23 +135,28 @@ void sig_handler(int signo){
 =====================================*/
 void find_center() {
     int count = 0;
-    for (int i=0; i<599; i++) {
-        for (int j=0; j<1599; j++) {
+    int num_rows = 0;
+    int i_max = 0;
+    int j_max = 0;
+    int radius_max = 0;
+    for (int i=0; i<=599; i++) {
+        count = 0;
+        for (int j=0; j<=1599; j++) {
             rgb_pixel_t read = ptr[(1600*i)+j];
             if(read.alpha == pixel.alpha && read.green == pixel.green && read.blue == pixel.blue && read.red == pixel.red) {
                 count += 1;
             }
-            if(count == (radius*2)) {
-                c.x = (j-radius)/20;
-                c.y = (i)/20;
+            if((count+1) == (radius*2) || (count-1) == (radius*2)) {
+                num_rows += 1;
+                radius_max = count/2;
+                j_max = j;
+                i_max = i;
                 break;
             }
         }
-
-        if(count == (radius*2)) {
-            break;
-        }   
     }
+    c.x = (j_max - radius_max)/20;
+    c.y = (i_max - (num_rows/2))/20;
 }
 
 
@@ -248,6 +253,18 @@ int main(int argc, char const *argv[]) {
     c_old[num_center].y = c.y;
     mvaddch(c.y, c.x, '0');
 
+    //update log file
+    FILE *flog;
+    flog = fopen("logFile.log", "a+");
+    if (flog == NULL) {
+        perror("ProcessB: cannot open log file");
+    }
+    else {
+        char * curr_time = current_time();
+        fprintf(flog, "< PROCESS B > center starting position (%d, %d) at time: %s \n", c.x*20, c.y*20, curr_time);
+    }
+    fclose(flog);
+
     // Infinite loop
     while (TRUE) {
         // Get input in non-blocking mode
@@ -287,7 +304,7 @@ int main(int argc, char const *argv[]) {
                 FILE *flog;
                 flog = fopen("logFile.log", "a+");
                 if (flog == NULL) {
-                    perror("ProcessA: cannot open log file");
+                    perror("ProcessB: cannot open log file");
                 }
                 else {
                     char * curr_time = current_time();
