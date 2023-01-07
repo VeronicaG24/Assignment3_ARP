@@ -8,7 +8,7 @@ The project provides the basic functionalities for the **processA** and **proces
 - The `src` folder contains the source code for the Command console, Inspection console and Master, MotorX, MotorZ, World and watchdog processes.
 - The `include` folder contains all the data structures and methods used within the ncurses framework to build the two GUIs. 
 - The `bin` folder is where the executable files are expected to be after compilation.
-- The `out` folder
+- The `out` folder is where the printed bitmap (.bmp) will be saved.
 - The `compile.sh` and `run.sh` to copile and run the project.
 - The `install.md` with the instruction for installing the necessary for running the code.
 - The `logFile.log` file cointains what is hapening during the execution.
@@ -33,29 +33,19 @@ bash ./run.sh
 ## Description of the code
 The code is divided into 4 processes: ProcessA, ProcessB, and Master. In each of the process, signals are manage through signal handler.
 
+The log file is updated each time occurs one of the following event:
+- from ProcessA: button "P" is pressed and the bitmap is saved as .bmp file
+- from ProcessA: new circle is written on the bitmap
+- from ProcessB: each time the center of the circle changed
+
 ### Master
-The master program spawns the other processes, and waits until the two processes close to exit.
+The master program spawns the other processes, and waits until the two processes close to exit. It creates the log file.
 
 ### ProcessA
-ProcessA manages the movement of the circle due to the pression of the arrow button on the keybpard, update the shared memory and if you press the button "P" it prints/saves the bitmap with the circle as a ".bmp" file.
+ProcessA manages the movement of the circle due to the pression of the arrow button on the keyboard, update the shared memory and if you press the button "P" it prints/saves the bitmap with the circle as a ".bmp" file.
 
 ### ProcessB
-ProcessB reads from the shared memory and look for the center. If the center of the circle is changed, it plots the new position of the circle.
+ProcessB reads from the shared memory and look for the center. If the center of the circle is changed, it plots the new position of the center.
 
-
-//CIRCLE non ci deve essere alla fine!! 
-
-### Circle
-Circle is a simple example of a program which uses the *libbitmap* library. It generates a 100x100 colored `.bmp` file with user-defined name, depicting a blue circle of given radius. When you execute it, pass the two arguments (file name and radius value) along. Execution example: ```./bin/circle out/test.bmp 20```.
-
-### Watchdog 
-The Warchdog process checks the inactivity of the program through the log file. It continuosly check the number of bytes written on the log file and if it does not chenge for more than 60 second, it kills all the processes including itself.
-
-The log file is updated each time occurs one of the following event:
-- from MotorX and MotorZ: its position changes
-- from World: the coordinates of the hoist are changed
-- from Command Console: each time a button is pressed
-- from Inspection Console: each time the stop button or the reset button is pressed
-- from Watchdog: when an inactivity is detected
 
 
