@@ -8,8 +8,8 @@ AUTHOR: Written by Francesca Corrao and Veronica Gavagna.
 -----------------------------------------------------------------------------
 
 DESCRIPTION
-  	The master program spawns the other processes, and waits for the 
-    processes close to close itself.
+  	The master program spawns the other processes, creates the log file, 
+    and waits for the processes close to close itself.
 
 =============================================================================*/
 

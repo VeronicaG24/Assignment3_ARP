@@ -12,7 +12,7 @@ DESCRIPTION
     due to the pression of the arrow button on the keyboard, crates and 
     updates the shared memory, creates and updates the local bitmap and 
     if you press the button "P" it prints/saves the bitmap with the circle 
-    as a ".bmp" file.
+    as a ".bmp" file. It updates log file.
 
 =============================================================================*/
 
@@ -169,7 +169,7 @@ void draw_bmp(int xc, int yc) {
 /*=====================================
   Manage the user interface,
   the motion of the circle, and the
-  print button.
+  print button. Update log file.
   RETURN:
     0 when exit
 =====================================*/

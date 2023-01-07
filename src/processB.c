@@ -10,7 +10,7 @@ AUTHOR: Written by Francesca Corrao and Veronica Gavagna.
 DESCRIPTION
   	ProcessB reads from the shared memory and look for the center of the circle. 
     If the center of the circle is changed, it plots the new position 
-    of the center of the circle.
+    of the center of the circle. It updates log file.
 
 ================================================================================*/
 
@@ -202,7 +202,7 @@ void draw_distance(int num_center) {
   Reads from the shared memory, 
   look for the center of the circle, 
   plots the new position of the center 
-  of the circle.
+  of the circle. Update log file.
   RETURN:
     0 when exit
 =====================================*/
