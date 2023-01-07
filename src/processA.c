@@ -61,6 +61,24 @@ int radius = 30;
 
 
 /*=====================================
+  Get current time
+  RETURN:
+    time and date
+=====================================*/
+char* current_time(){
+    time_t rawtime;
+    struct tm * timeinfo;
+    char* timedate;
+
+    time ( &rawtime );
+    timeinfo = localtime ( &rawtime );
+
+    timedate = asctime(timeinfo);
+    return timedate;
+}
+
+
+/*=====================================
   Manage signals received
   INPUT:
   SIGINT or SIGTERM
@@ -133,6 +151,18 @@ void draw_bmp(int xc, int yc) {
             }
         }
     }
+
+    //update log file
+    FILE *flog;
+    flog = fopen("logFile.log", "a+");
+    if (flog == NULL) {
+        perror("ProcessA: cannot open log file");
+    }
+    else {
+        char * curr_time = current_time();
+        fprintf(flog, "< PROCESS A > draw new circle with center (%d, %d) on the bitmap at time: %s \n", xc, yc, curr_time);
+    }
+    fclose(flog);
 }
 
 
@@ -230,6 +260,18 @@ int main(int argc, char *argv[]) {
                     bmp_save(bmp, "./out/bitmap.bmp");
                     refresh();
                     sleep(1);
+
+                    //update log file
+                    FILE *flog;
+                    flog = fopen("logFile.log", "a+");
+                    if (flog == NULL) {
+                        perror("ProcessA: cannot open log file");
+                    }
+                    else {
+                        char * curr_time = current_time();
+                        fprintf(flog, "< PROCESS A > print bitmap at time: %s \n", curr_time);
+                    }
+                    fclose(flog);
                     
                     for (int j = 0; j < COLS - BTN_SIZE_X - 2; j++) {
                         mvaddch(LINES - 1, j, ' ');

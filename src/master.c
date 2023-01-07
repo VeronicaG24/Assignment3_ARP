@@ -49,7 +49,7 @@ int spawn(const char * program, char * arg_list[]) {
 }
 
 /*=====================================
-  Manage processes
+  Manage processes and create log file
   RETURN:
     0 when exit
 =====================================*/
@@ -57,6 +57,13 @@ int main() {
 
   char * arg_list_A[] = { "/usr/bin/konsole", "-e", "./bin/processA", NULL };
   char * arg_list_B[] = { "/usr/bin/konsole", "-e", "./bin/processB", NULL };
+
+  //reset log file if exists
+  if(remove("./logFile.log")!=0){
+    perror("Log file not deleted:");
+  }
+  //create new logfile
+  fclose(fopen("./logFile.log", "w"));
 
   //generate processA and processB
   pid_t pid_procA = spawn("/usr/bin/konsole", arg_list_A);

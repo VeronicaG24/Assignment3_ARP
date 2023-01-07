@@ -68,6 +68,24 @@ center c_old[max_num_center];
 
 
 /*=====================================
+  Get current time
+  RETURN:
+    time and date
+=====================================*/
+char* current_time(){
+    time_t rawtime;
+    struct tm * timeinfo;
+    char* timedate;
+
+    time ( &rawtime );
+    timeinfo = localtime ( &rawtime );
+
+    timedate = asctime(timeinfo);
+    return timedate;
+}
+
+
+/*=====================================
   Manage signals received
   INPUT:
   SIGINT or SIGTERM
@@ -116,7 +134,7 @@ void sig_handler(int signo){
     null
 =====================================*/
 void find_center() {
-    int count =0;
+    int count = 0;
     for (int i=0; i<599; i++) {
         for (int j=0; j<1599; j++) {
             rgb_pixel_t read = ptr[(1600*i)+j];
@@ -125,7 +143,7 @@ void find_center() {
             }
             if(count == (radius*2)) {
                 c.x = (j-radius)/20;
-                c.y = i/20;
+                c.y = (i)/20;
                 break;
             }
         }
@@ -264,6 +282,19 @@ int main(int argc, char const *argv[]) {
                 c_old[num_center].y = c.y;
                 //draw distance from the previous position to the new one
                 draw_distance(num_center);
+
+                //update log file
+                FILE *flog;
+                flog = fopen("logFile.log", "a+");
+                if (flog == NULL) {
+                    perror("ProcessA: cannot open log file");
+                }
+                else {
+                    char * curr_time = current_time();
+                    fprintf(flog, "< PROCESS B > center position is changed (%d, %d) at time: %s \n", c.x*20, c.y*20, curr_time);
+                }
+                fclose(flog);
+
             }   
             refresh();
         }
