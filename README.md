@@ -5,7 +5,7 @@ The project provides you with a base infrastructure for the implementation of th
 The two processes involved in the simulation of the vision system, namely **processA** and **processB**, are implemented as simple *ncurses windows*. 
 
 The project provides the basic functionalities for the **processA** and **processB**, both of which are implemented through the *ncurses library* as simple GUIs. In particular, the repository is organized as follows:
-- The `src` folder contains the source code for the Command console, Inspection console and Master, MotorX, MotorZ, World and watchdog processes.
+- The `src` folder contains the source code for the Master, ProcessA and ProcessB processes.
 - The `include` folder contains all the data structures and methods used within the ncurses framework to build the two GUIs. 
 - The `bin` folder is where the executable files are expected to be after compilation.
 - The `out` folder is where the printed bitmap (.bmp) will be saved.
