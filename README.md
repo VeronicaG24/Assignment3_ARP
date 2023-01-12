@@ -1,4 +1,4 @@
-# ARP-Assignment2
+# ARP-Assignment3
 Repository for the **second ARP assignment**.
 The project provides you with a base infrastructure for the implementation of the simulated vision system through shared memory, according to the requirements specified in the PDF file of the assignment.
 
