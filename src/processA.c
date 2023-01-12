@@ -77,36 +77,46 @@ char* current_time(){
     return timedate;
 }
 
+
+/*=====================================
+  Close semaphores and unmap shared
+  memory
+  RETURN:
+    value of exit
+        -1 if error
+        0 if ok
+=====================================*/
 int release_resouces(){
     int ret=0;
-    // close semaphore
+    // close semaphores
     if(sem_close(sem_id1)==-1){
-    perror("A-Can't close semaphore 1");
-    ret=-1;
+        perror("A-Can't close semaphore 1");
+        ret=-1;
     }
     if(sem_close(sem_id2)==-1){
-    perror("A-Can't close semaphore 2");
-    ret=-1;
+        perror("A-Can't close semaphore 2");
+        ret=-1;
     }
     if(sem_unlink(SEM_PATH_1)==-1){
-    perror("A- Can't unlink semaphore 1");
-    ret=-1;
+        perror("A- Can't unlink semaphore 1");
+        ret=-1;
     }
     if(sem_unlink(SEM_PATH_2)==-1){
-    perror("A: Can't unlink semaphore 2");
-    ret=-1;
+        perror("A: Can't unlink semaphore 2");
+        ret=-1;
     }
 
     // unmmap pointer shared memory
     if(munmap(ptr, size)==-1){
-    perror("A-can't unmap correctly");
-    ret=-1;
+        perror("A-can't unmap correctly");
+        ret=-1;
     }
     // close shared memory
     if (shm_unlink(shm_name) == -1) {
-    perror("A-Can't unlink shared memory");
-    ret=-1;
+        perror("A-Can't unlink shared memory");
+        ret=-1;
     }
+
     return(ret);
 }
 

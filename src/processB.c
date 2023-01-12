@@ -84,9 +84,18 @@ char* current_time(){
     return timedate;
 }
 
+
+/*=====================================
+  Close semaphores and unmap shared
+  memory
+  RETURN:
+    value of exit
+        -1 if error
+        0 if ok
+=====================================*/
 int relese_resources(){
     int ret =0;
-    //close semaphore
+    //close semaphores
     if(sem_close(sem_id1)==-1){
         perror("B-Can't close semaphore 1");
         ret =-1;
