@@ -1,5 +1,5 @@
-# ARP-Hoist-Assignment
-Base repository for the **second ARP assignment**.
+# ARP-Assignment2
+Repository for the **second ARP assignment**.
 The project provides you with a base infrastructure for the implementation of the simulated vision system through shared memory, according to the requirements specified in the PDF file of the assignment.
 
 The two processes involved in the simulation of the vision system, namely **processA** and **processB**, are implemented as simple *ncurses windows*. 
@@ -12,6 +12,7 @@ The project provides the basic functionalities for the **processA** and **proces
 - The `compile.sh` and `run.sh` to copile and run the project.
 - The `install.md` with the instruction for installing the necessary for running the code.
 - The `logFile.log` file cointains what is hapening during the execution.
+- The `userGuide.txt` file contains the instruction of how to use the interface.
 
 ## How to run
 To run the program it is necessary to download the repository:
