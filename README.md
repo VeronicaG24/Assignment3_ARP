@@ -1,5 +1,5 @@
 # ARP-Assignment3
-Repository for the **second ARP assignment**.
+Repository for the **third ARP assignment**.
 The project provides you with a base infrastructure for the implementation of the simulated vision system through shared memory, according to the requirements specified in the PDF file of the assignment.
 
 The two processes involved in the simulation of the vision system, namely **processA** and **processB**, are implemented as simple *ncurses windows*. 
@@ -17,7 +17,7 @@ The project provides the basic functionalities for the **processA** and **proces
 ## How to run
 To run the program it is necessary to download the repository:
 ```console
-git clone https://github.com/VeronicaG24/Assignment2_ARP.git
+git clone https://github.com/VeronicaG24/Assignment3_ARP.git
 ```
 
 If there is no `bin` folder and/or `out` folder in the local repository, create them.
