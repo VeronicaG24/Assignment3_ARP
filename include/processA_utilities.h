@@ -165,4 +165,3 @@ void reset_console_ui() {
     draw_side_ui();
 }
 
-

@@ -1,31 +1,52 @@
 # ARP-Assignment2
-Base repository for the **second ARP assignment**.
+Repository for the **second ARP assignment**.
 The project provides you with a base infrastructure for the implementation of the simulated vision system through shared memory, according to the requirements specified in the PDF file of the assignment.
 
-The two processes involved in the simulation of the vision system, namely **processA** and **processB**, are implemented as simple *ncurses windows*. The development of the inter-process communication pipeline, that is the shared memory, is left to you.
+The two processes involved in the simulation of the vision system, namely **processA** and **processB**, are implemented as simple *ncurses windows*. 
 
-As for the first assignment, you also find a **master** process already prepared for you, responsible of spawning the entire simulation.
+The project provides the basic functionalities for the **processA** and **processB**, both of which are implemented through the *ncurses library* as simple GUIs. In particular, the repository is organized as follows:
+- The `src` folder contains the source code for the Master, ProcessA and ProcessB processes.
+- The `include` folder contains all the data structures and methods used within the ncurses framework to build the two GUIs. 
+- The `bin` folder is where the executable files are expected to be after compilation.
+- The `out` folder is where the printed bitmap (.bmp) will be saved.
+- The `compile.sh` and `run.sh` to copile and run the project.
+- The `install.md` with the instruction for installing the necessary for running the code.
+- The `logFile.log` file cointains what is hapening during the execution.
+- The `userGuide.txt` file contains the instruction of how to use the interface.
 
-Additionally, I have prepared a simple program called **circle.c**, which shows you the basic functionalities of the *libbitmap* library. Please, note that the **circle.c** process must not appear in your final project. It is simply meant to be a guide for you on how to use the bitmap library, therefore you will need to properly use portions of that code in **processA** and **processB** in order to develop your solution.
+## How to run
+To run the program it is necessary to download the repository:
+```console
+git clone https://github.com/VeronicaG24/Assignment2_ARP.git
+```
 
-## *libbitmap* installation and usage
-To work with the bitmap library, you need to follow these steps:
-1. Download the source code from [this GitHub repo](https://github.com/draekko/libbitmap.git) in your file system.
-2. Navigate to the root directory of the downloaded repo and run the configuration through command ```./configure```. Configuration might take a while.  While running, it prints some messages telling which features it is checking for.
-3. Type ```make``` to compile the package.
-4. Run ```make install``` to install the programs and any data files and documentation.
-5. Upon completing the installation, check that the files have been properly installed by navigating to ```/usr/local/lib```, where you should find the ```libbmp.so``` shared library ready for use.
-6. In order to properly compile programs which use the *libbitmap* library, you first need to notify the **linker** about the location of the shared library. To do that, you can simply add the following line at the end of your ```.bashrc``` file:      
-```export LD_LIBRARY_PATH="/usr/local/lib:$LD_LIBRARY_PATH"```
-### Using *libbitmap* in your code
-Now that you have properly installed the library in your system, it's time to use it in your programs:
-1. Include the library in your programs via ```#include <bmpfile.h>```. If you want to check the content of ```bmpfile.h``` to glimpse the functionalities of the library, navigate to ```/usr/local/include```, where the header file should be located.
-2. Compile programs which use the *libbitmap* library by linking the shared library with the ```-lbmp``` command.     
-Example for compiling **circle.c**: ```gcc src/circle.c -lbmp -lm -o bin/circle``` 
+If there is no `bin` folder and/or `out` folder in the local repository, create them.
 
-## Compiling and running **processA** and **processB**
-The two processes are implemented as UIs through *ncurses* library, therefore you need to compile their source files by linking the shared library via ```-lncurses```. As for the first assignment, exploit the resize event of the windows to get out of situations in which the graphical elements do not properly spawn.
+Then, move into the folder and compile the code using:
+```console
+bash ./compile.sh
+```
+And run it:
+```console
+bash ./run.sh
+```
 
-## Executing **circle.c**
-This is a simple example of a program which uses the *libbitmap* library. It generates a 100x100 colored `.bmp` file with user-defined name, depicting a blue circle of given radius. When you execute it, pass the two arguments (file name and radius value) along. Execution example: ```./bin/circle out/test.bmp 20```.
+## Description of the code
+The code is divided into 4 processes: ProcessA, ProcessB, and Master. In each of the process, signals are manage through signal handler.
+
+The log file is updated each time occurs one of the following event:
+- from ProcessA: button "P" is pressed and the bitmap is saved as .bmp file
+- from ProcessA: new circle is written on the bitmap
+- from ProcessB: each time the center of the circle changed
+
+### Master
+The master program spawns the other processes, and waits until the two processes close to exit. It creates the log file.
+
+### ProcessA
+ProcessA manages the movement of the circle due to the pression of the arrow button on the keyboard, update the shared memory and if you press the button "P" it prints/saves the bitmap with the circle as a ".bmp" file.
+
+### ProcessB
+ProcessB reads from the shared memory and look for the center. If the center of the circle is changed, it plots the new position of the center.
+
+
 
