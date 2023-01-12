@@ -20,7 +20,7 @@ To run the program it is necessary to download the repository:
 git clone https://github.com/VeronicaG24/Assignment2_ARP.git
 ```
 
-If there is no `bin` folder in the local repository, create one.
+If there is no `bin` folder and/or `out` folder in the local repository, create them.
 
 Then, move into the folder and compile the code using:
 ```console
