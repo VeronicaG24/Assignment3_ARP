@@ -1,0 +1,18 @@
+How to run
+Move into the folder and compile the code from the terminal using:
+    bash ./compile.sh
+
+And run it:
+    bash ./run.sh
+
+Two konsole windows will be displayed:
+1. One with a green cross (named ProcessA) and a blue button "P"
+2. One (named ProcessB) completely black with one "0" corresponding to the center of the circle 
+rappresented with the green cross in the first windows.
+
+To move the green cross, it is necessary to select the "processA" window and click the arrows button on the keyboard.
+When the cross moves, its position of the center will be displayed on processB window (plotting the distance between 
+the previous center and the second center).
+
+To print the circle in the current position, the button "P" on processA has to be clicked with the mouse and the image
+will be saved in "out" folder.
