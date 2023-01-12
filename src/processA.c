@@ -59,6 +59,8 @@ int depth = 4;
 //radius of the circle
 int radius = 30;
 
+//mode 0:normal 1:client 2:server
+int mode;
 
 /*=====================================
   Get current time
@@ -297,7 +299,8 @@ int main(int argc, char *argv[]) {
 
         // Get input in non-blocking mode
         int cmd = getch();
-
+        //add cmd2 when server read from socket when client/normale = cmd
+        int cmd2=cmd;
         // If user resizes screen, re-draw UI...
         if (cmd == KEY_RESIZE) {
             if (first_resize) {
@@ -338,8 +341,9 @@ int main(int argc, char *argv[]) {
         }
 
         // If input is an arrow key, move circle accordingly...
-        else if (cmd == KEY_LEFT || cmd == KEY_RIGHT || cmd == KEY_UP || cmd == KEY_DOWN) {
-            
+        else if (cmd2 == KEY_LEFT || cmd2 == KEY_RIGHT || cmd2 == KEY_UP || cmd2 == KEY_DOWN) {
+            //if client
+                //send
             move_circle(cmd);
             draw_circle();
 
