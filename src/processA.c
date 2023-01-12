@@ -77,6 +77,38 @@ char* current_time(){
     return timedate;
 }
 
+int release_resouces(){
+    int ret=0;
+    // close semaphore
+    if(sem_close(sem_id1)==-1){
+    perror("A-Can't close semaphore 1");
+    ret=-1;
+    }
+    if(sem_close(sem_id2)==-1){
+    perror("A-Can't close semaphore 2");
+    ret=-1;
+    }
+    if(sem_unlink(SEM_PATH_1)==-1){
+    perror("A- Can't unlink semaphore 1");
+    ret=-1;
+    }
+    if(sem_unlink(SEM_PATH_2)==-1){
+    perror("A: Can't unlink semaphore 2");
+    ret=-1;
+    }
+
+    // unmmap pointer shared memory
+    if(munmap(ptr, size)==-1){
+    perror("A-can't unmap correctly");
+    ret=-1;
+    }
+    // close shared memory
+    if (shm_unlink(shm_name) == -1) {
+    perror("A-Can't unlink shared memory");
+    ret=-1;
+    }
+    return(ret);
+}
 
 /*=====================================
   Manage signals received
@@ -92,31 +124,21 @@ void sig_handler(int signo){
     if(signo==SIGINT || signo==SIGTERM) {
         printf("A-received SIGINT!");
         fflush(stdout);
-        
+        int ret_val;
         // close semaphore
-        sem_close(sem_id1);
-        sem_close(sem_id2);
-        sem_unlink(SEM_PATH_1);
-        sem_unlink(SEM_PATH_1);
-
-        // unmmap pointer shared memory
-        munmap(ptr, size);
-        // close shared memory
-        if (shm_unlink(shm_name) == -1) {
-            perror("A-Can't unlink shared memory");
-            exit(-1);
-        }
-
-        exit(0);
+        ret_val=release_resouces();
+        exit(ret_val);
     }
 
     //manage errors in handling signals
     if (signal(SIGINT, sig_handler) == SIG_ERR) {
         perror("A-Can't set the signal handler for SIGINT\n");
+        release_resouces();
         exit(-1);
     }
     if (signal(SIGTERM, sig_handler) == SIG_ERR) {
         perror("A-Can't set the signal handler for SIGTERM\n");
+        release_resouces();
         exit(-1);
     }
 }
@@ -156,7 +178,7 @@ void draw_bmp(int xc, int yc) {
     FILE *flog;
     flog = fopen("logFile.log", "a+");
     if (flog == NULL) {
-        perror("ProcessA: cannot open log file");
+        perror("ProcessA- cannot open log file");
     }
     else {
         char * curr_time = current_time();
@@ -211,17 +233,38 @@ int main(int argc, char *argv[]) {
     ptr= (rgb_pixel_t *)mmap(0, size,PROT_WRITE, MAP_SHARED,shm_fd,0);
     if(ptr<0){
         perror("A-error in mapping the shared memory:");
+        release_resouces();
         exit(-1);
     }
 
     // semaphores
-    sem_id1 = sem_open(SEM_PATH_1, O_CREAT, S_IRUSR | S_IWUSR, 1);
-    sem_id2 = sem_open(SEM_PATH_2, O_CREAT, S_IRUSR | S_IWUSR, 1);
-    sem_init(sem_id1, 1, 1); // initialized to 1
-    sem_init(sem_id2, 1, 0); // initialized to 0
+    if((sem_id1 = sem_open(SEM_PATH_1, O_CREAT, S_IRUSR | S_IWUSR, 1))==SEM_FAILED){
+        perror("A-error in opening semaphore 1");
+        release_resouces();
+        exit(-1);
+    }
+    if((sem_id2 = sem_open(SEM_PATH_2, O_CREAT, S_IRUSR | S_IWUSR, 1))==SEM_FAILED){
+        perror("A-error in opening semaphore 2");
+        release_resouces();
+        exit(-1);
+    }
+    if(sem_init(sem_id1, 1, 1)==-1){
+        perror("A-error in init semaphore1");
+        release_resouces();
+        exit(-1);
+    }
+    if( sem_init(sem_id2, 1, 0)==-1){
+        perror("A-error in init semaphore 2");
+        release_resouces();
+        exit(-1);
+    }
 
     //send first bitmap
-    sem_wait(sem_id1);
+    if(sem_wait(sem_id1)==-1){
+        perror("A-wait sem1");
+        release_resouces();
+        exit(-1);
+    }
     //send first position of the center
     for(int i=0; i<=599; i++){
         for (int j=0; j<=1599; j++){
@@ -233,7 +276,11 @@ int main(int argc, char *argv[]) {
             ptr[index].red=read->red;
         } 
     }
-    sem_post(sem_id2);
+    if(sem_post(sem_id2)==-1){
+        perror("A-can't post sem2");
+        release_resouces();
+        exit(-1);
+    }
 
     // Infinite loop
     while (TRUE) {
@@ -290,7 +337,11 @@ int main(int argc, char *argv[]) {
             draw_bmp((circle.x)*20, (circle.y)*20);
             
             // copy on the shared memory
-            sem_wait(sem_id1);
+            if(sem_wait(sem_id1)==-1){
+                perror("A-wait sem1");
+                release_resouces();
+                exit(-1);
+            }
             //send new position of the center
             for(int i=0; i<=599; i++){
                 for (int j=0; j<=1599; j++){
@@ -302,7 +353,11 @@ int main(int argc, char *argv[]) {
                     ptr[index].red=read->red;
                 } 
             }
-            sem_post(sem_id2);
+            if(sem_post(sem_id2)==-1){
+                perror("A-can't post sem2");
+                release_resouces();
+                exit(-1);
+            }
         }
     }
 
@@ -310,19 +365,7 @@ int main(int argc, char *argv[]) {
     printf("closing\n");
     fflush(stdout);
     sleep(5);
-
-    // unmmap pointer of the shared memory
-    munmap(ptr, size);
-    // close shared memory
-    if (shm_unlink(shm_name) == -1) {
-        perror("A-Can't unlink shared memory");
-    }
-
-    // close semaphores
-    sem_close(sem_id1);
-    sem_close(sem_id2);
-    sem_unlink(SEM_PATH_1);
-    sem_unlink(SEM_PATH_1);
-
-    return 0;
+    int ret_val;
+    ret_val=release_resouces();
+    return ret_val;
 }

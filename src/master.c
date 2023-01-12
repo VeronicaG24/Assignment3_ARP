@@ -74,9 +74,9 @@ int main() {
   int status;
   //wait until proccessA and processB end
   waitpid(pid_procB, &status, 0);
-  printf("process B terminate\n");
+  printf("process B terminate with status %d\n", status);
   waitpid(pid_procA, &status, 0);
-  printf("process A terminate\n");
+  printf("process A terminate with status %d\n", status);
   
   printf ("Main program exiting with status %d\n", status);
   return 0;
