@@ -29,6 +29,11 @@ DESCRIPTION
 #include <errno.h>
 #include <signal.h>
 
+#include <sys/types.h>
+#include <sys/socket.h>
+#include <netinet/in.h>
+#include <netdb.h>
+
 #define SEM_PATH_1 "/sem_w"
 #define SEM_PATH_2 "/sem_r"
 
@@ -61,6 +66,11 @@ int radius = 30;
 
 //mode 0:normal 1:client 2:server
 int mode;
+
+//socket variables 
+int socketfd, newsockfd, portno, clilen, n;
+struct sockaddr_in serv_addr, cli_addr;
+struct hostent *server;
 
 /*=====================================
   Get current time
@@ -293,6 +303,56 @@ int main(int argc, char *argv[]) {
         release_resouces();
         exit(-1);
     }
+    //ask user for type of process
+    /*int type = 0;
+    scanf("What kind of mode process run has to run ? 0 normal - 1 client - 2 server: %d", &type);
+    switch(type){
+        case type =0{
+            //normal execution nothing to do;
+        }
+        case type=1{
+            //client
+            sockfd = socket(AF_INET, SOCK_STREAM, 0);
+            if(sockfd <0){
+                perror("error in opening socket");
+            }
+            //get server address by name or in other way 
+            serv_addr.sin_family=AF_INET;
+            serv_addr.sin_port=htons(portno);
+            serv_addr.sin_add.s_add=;
+            //connect
+            connect(sockfd, &serv_addr, sizeof(serv_addr));
+
+        }
+        case type =2{
+            //server
+            sockfd = socket(AF_INET, SOCK_STREAM, 0);
+            if(sockfd <0){
+                perror("error in opening socket");
+            }
+            //get port number 
+            serv_addr.sin_family=AF_INET;
+            serv_addr.sin_port=htons(portno);
+            serv_addr.sin_add.s_add=;
+
+            //bind
+            bind(sockfd, (struct sockadrr *)&serv_adrr, sizeof(serv_adrr))
+
+            //listen
+            listen(sockfd,5); 
+
+            //accept 
+            newsockfd = accept(sockfd,(struct sockadrr *)&cli_addr, sizeof(cli_addr));
+            if(newsockfd <0){
+                perror("error in opening socket");
+            }
+        }
+        default:{
+            printf("error unrecognized value inserted");
+            ask again value;
+        }
+    }
+    */
 
     // Infinite loop
     while (TRUE) {
@@ -301,6 +361,13 @@ int main(int argc, char *argv[]) {
         int cmd = getch();
         //add cmd2 when server read from socket when client/normale = cmd
         int cmd2=cmd;
+        /*
+        if (type ==2){
+            //read from socket cmd
+            read(newsockfd, &cmd2, sizeof(int));
+            //convert in int the value read from the socket
+        }
+        */
         // If user resizes screen, re-draw UI...
         if (cmd == KEY_RESIZE) {
             if (first_resize) {
@@ -342,8 +409,12 @@ int main(int argc, char *argv[]) {
 
         // If input is an arrow key, move circle accordingly...
         else if (cmd2 == KEY_LEFT || cmd2 == KEY_RIGHT || cmd2 == KEY_UP || cmd2 == KEY_DOWN) {
-            //if client
-                //send
+            /*
+            if(type == 1){
+                //send on the socket
+                write(sockfd, &cmd2, sizeof(int));
+            }
+            */
             move_circle(cmd);
             draw_circle();
 
