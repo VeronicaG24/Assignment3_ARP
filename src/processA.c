@@ -68,7 +68,7 @@ int radius = 30;
 int mode;
 
 //socket variables 
-int socketfd, newsockfd, portno, clilen, n;
+int sockfd, newsockfd, portno, clilen, n;
 struct sockaddr_in serv_addr, cli_addr;
 struct hostent *server;
 
@@ -304,39 +304,53 @@ int main(int argc, char *argv[]) {
         exit(-1);
     }
     //ask user for type of process
-    /*int type = 0;
-    scanf("What kind of mode process run has to run ? 0 normal - 1 client - 2 server: %d", &type);
-    switch(type){
-        case type =0{
+    
+    scanf("What kind of mode process run has to run ? 0 normal - 1 client - 2 server: %d", &mode);
+    switch(mode){
+        case 0:
             //normal execution nothing to do;
-        }
-        case type=1{
+            break;
+        
+        case 1:
             //client
             sockfd = socket(AF_INET, SOCK_STREAM, 0);
             if(sockfd <0){
                 perror("error in opening socket");
             }
-            //get server address by name or in other way 
+            //get server address by name or in other way
+            char * server_name;
+            struct hostent *server;
+            if (server == NULL) {
+                fprintf(stderr,"ERROR, no such host\n");
+                exit(0);
+            }
+            scanf("name of the host %s", server_name);
+            scanf("portnumber to use: %d", &portno);
+            server= gethostbyname(server_name);
             serv_addr.sin_family=AF_INET;
             serv_addr.sin_port=htons(portno);
-            serv_addr.sin_add.s_add=;
+            bcopy((char *)server->h_addr, (char *)&serv_addr.sin_addr.s_addr, server->h_length);
             //connect
             connect(sockfd, &serv_addr, sizeof(serv_addr));
+            break;
 
-        }
-        case type =2{
+        
+        case 2:
             //server
             sockfd = socket(AF_INET, SOCK_STREAM, 0);
             if(sockfd <0){
                 perror("error in opening socket");
             }
             //get port number 
+            scanf("portnumber to use: %d", &portno);
             serv_addr.sin_family=AF_INET;
             serv_addr.sin_port=htons(portno);
-            serv_addr.sin_add.s_add=;
+            serv_addr.sin_addr.s_addr=INADDR_ANY;
 
             //bind
-            bind(sockfd, (struct sockadrr *)&serv_adrr, sizeof(serv_adrr))
+            if(bind(sockfd, (struct sockadrr *)&serv_addr, sizeof(serv_addr))<0){
+                perror("error in bind");
+            }
 
             //listen
             listen(sockfd,5); 
@@ -346,13 +360,14 @@ int main(int argc, char *argv[]) {
             if(newsockfd <0){
                 perror("error in opening socket");
             }
-        }
-        default:{
+            break;
+        
+        default:
             printf("error unrecognized value inserted");
-            ask again value;
-        }
+            //ask again value;
+        
     }
-    */
+
 
     // Infinite loop
     while (TRUE) {
@@ -361,13 +376,12 @@ int main(int argc, char *argv[]) {
         int cmd = getch();
         //add cmd2 when server read from socket when client/normale = cmd
         int cmd2=cmd;
-        /*
-        if (type ==2){
+        
+        if (mode ==2){
             //read from socket cmd
             read(newsockfd, &cmd2, sizeof(int));
             //convert in int the value read from the socket
         }
-        */
         // If user resizes screen, re-draw UI...
         if (cmd == KEY_RESIZE) {
             if (first_resize) {
@@ -410,7 +424,7 @@ int main(int argc, char *argv[]) {
         // If input is an arrow key, move circle accordingly...
         else if (cmd2 == KEY_LEFT || cmd2 == KEY_RIGHT || cmd2 == KEY_UP || cmd2 == KEY_DOWN) {
             /*
-            if(type == 1){
+            if(mode == 1){
                 //send on the socket
                 write(sockfd, &cmd2, sizeof(int));
             }
