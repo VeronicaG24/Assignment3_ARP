@@ -222,9 +222,6 @@ int main(int argc, char *argv[]) {
     // Utility variable to avoid trigger resize event on launch
     int first_resize = TRUE;
 
-    // Initialize UI
-    init_console_ui();
-
     //manage signals
     if (signal(SIGINT, sig_handler) == SIG_ERR) {
         perror("A-Can't set the signal handler for SIGINT\n");
@@ -238,8 +235,8 @@ int main(int argc, char *argv[]) {
     // local bitmap
     bmp = bmp_create(width, height, depth);
     draw_bmp((circle.x)*20,(circle.y)*20);
-    
-    // open the shared memery
+
+     // open the shared memery
     shm_fd = shm_open(shm_name, O_CREAT | O_RDWR, 0666);
     if (shm_fd == -1){
         perror("A-error in open the shared memory:");
@@ -281,52 +278,34 @@ int main(int argc, char *argv[]) {
         exit(-1);
     }
 
-    //send first bitmap
-    if(sem_wait(sem_id1)==-1){
-        perror("A-wait sem1");
-        release_resouces();
-        exit(-1);
-    }
-    //send first position of the center
-    for(int i=0; i<=599; i++){
-        for (int j=0; j<=1599; j++){
-            int index=(1600*i)+j;
-            rgb_pixel_t * read = bmp_get_pixel(bmp,j,i);
-            ptr[index].alpha=read->alpha;
-            ptr[index].blue=read->blue;
-            ptr[index].green=read->green;
-            ptr[index].red=read->red;
-        } 
-    }
-    if(sem_post(sem_id2)==-1){
-        perror("A-can't post sem2");
-        release_resouces();
-        exit(-1);
-    }
-    //ask user for type of process
-    
-    scanf("What kind of mode process run has to run ? 0 normal - 1 client - 2 server: %d", &mode);
+printf("What kind of mode process run has to run ? 0 normal - 1 client - 2 server:");
+scanf("%d", &mode);
     switch(mode){
         case 0:
             //normal execution nothing to do;
+            printf("assignment2 mode");
             break;
         
         case 1:
             //client
+            printf("client mode\n");
             sockfd = socket(AF_INET, SOCK_STREAM, 0);
             if(sockfd <0){
                 perror("error in opening socket");
+                sleep(5);
             }
             //get server address by name or in other way
-            char * server_name;
+            char server_name[80];
             struct hostent *server;
+            printf("hostname:");
+            scanf("%s", server_name);
+            printf("\nportnumber to use:");
+            scanf("%d", &portno);
+            server= gethostbyname(server_name);
             if (server == NULL) {
                 fprintf(stderr,"ERROR, no such host\n");
-                exit(0);
+                sleep(5);
             }
-            scanf("name of the host %s", server_name);
-            scanf("portnumber to use: %d", &portno);
-            server= gethostbyname(server_name);
             serv_addr.sin_family=AF_INET;
             serv_addr.sin_port=htons(portno);
             bcopy((char *)server->h_addr, (char *)&serv_addr.sin_addr.s_addr, server->h_length);
@@ -337,12 +316,14 @@ int main(int argc, char *argv[]) {
         
         case 2:
             //server
+            printf("server mode\n");
             sockfd = socket(AF_INET, SOCK_STREAM, 0);
             if(sockfd <0){
                 perror("error in opening socket");
             }
             //get port number 
-            scanf("portnumber to use: %d", &portno);
+            printf("portnumber to use:");
+            scanf("%d", &portno);
             serv_addr.sin_family=AF_INET;
             serv_addr.sin_port=htons(portno);
             serv_addr.sin_addr.s_addr=INADDR_ANY;
@@ -369,6 +350,33 @@ int main(int argc, char *argv[]) {
     }
 
 
+    // Initialize UI
+    init_console_ui();
+ 
+    //send first bitmap
+    if(sem_wait(sem_id1)==-1){
+        perror("A-wait sem1");
+        release_resouces();
+        exit(-1);
+    }
+    //send first position of the center
+    for(int i=0; i<=599; i++){
+        for (int j=0; j<=1599; j++){
+            int index=(1600*i)+j;
+            rgb_pixel_t * read = bmp_get_pixel(bmp,j,i);
+            ptr[index].alpha=read->alpha;
+            ptr[index].blue=read->blue;
+            ptr[index].green=read->green;
+            ptr[index].red=read->red;
+        } 
+    }
+    if(sem_post(sem_id2)==-1){
+        perror("A-can't post sem2");
+        release_resouces();
+        exit(-1);
+    }
+    //ask user for type of process
+    
     // Infinite loop
     while (TRUE) {
 
