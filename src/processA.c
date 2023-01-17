@@ -310,7 +310,10 @@ scanf("%d", &mode);
             serv_addr.sin_port=htons(portno);
             bcopy((char *)server->h_addr, (char *)&serv_addr.sin_addr.s_addr, server->h_length);
             //connect
-            connect(sockfd, &serv_addr, sizeof(serv_addr));
+            if(connect(sockfd, &serv_addr, sizeof(serv_addr))<0){
+                perror("connect error");
+                sleep(5);
+            }
             break;
 
         
@@ -375,20 +378,24 @@ scanf("%d", &mode);
         release_resouces();
         exit(-1);
     }
-    //ask user for type of process
-    
+
+    char cmd_c[3] ;
     // Infinite loop
     while (TRUE) {
 
         // Get input in non-blocking mode
         int cmd = getch();
         //add cmd2 when server read from socket when client/normale = cmd
-        int cmd2=cmd;
-        
-        if (mode ==2){
+        int cmd2 = cmd;        
+        if (mode == 2){
             //read from socket cmd
-            read(newsockfd, &cmd2, sizeof(int));
+            read(newsockfd, cmd_c, sizeof(cmd_c));
+            cmd2=atoi(cmd_c);
+            //printf("%d", cmd2);
             //convert in int the value read from the socket
+        }
+        else{
+            cmd2=cmd;
         }
         // If user resizes screen, re-draw UI...
         if (cmd == KEY_RESIZE) {
@@ -431,13 +438,17 @@ scanf("%d", &mode);
 
         // If input is an arrow key, move circle accordingly...
         else if (cmd2 == KEY_LEFT || cmd2 == KEY_RIGHT || cmd2 == KEY_UP || cmd2 == KEY_DOWN) {
-            /*
+            
             if(mode == 1){
                 //send on the socket
-                write(sockfd, &cmd2, sizeof(int));
+                bzero(cmd_c, sizeof(cmd_c));
+                sprintf(cmd_c, "%d", cmd2);
+                if(write(sockfd, cmd_c, sizeof(cmd_c))<sizeof(cmd_c)){
+                    perror("Write:");
+                }
             }
-            */
-            move_circle(cmd);
+
+            move_circle(cmd2);
             draw_circle();
 
             // draw circle of the bitmap
@@ -449,6 +460,7 @@ scanf("%d", &mode);
                 release_resouces();
                 exit(-1);
             }
+
             //send new position of the center
             for(int i=0; i<=599; i++){
                 for (int j=0; j<=1599; j++){
@@ -460,11 +472,13 @@ scanf("%d", &mode);
                     ptr[index].red=read->red;
                 } 
             }
+
             if(sem_post(sem_id2)==-1){
                 perror("A-can't post sem2");
                 release_resouces();
                 exit(-1);
             }
+
         }
     }
 
