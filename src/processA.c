@@ -33,6 +33,7 @@ DESCRIPTION
 #include <sys/socket.h>
 #include <netinet/in.h>
 #include <netdb.h>
+#include <strings.h>
 
 #define SEM_PATH_1 "/sem_w"
 #define SEM_PATH_2 "/sem_r"
@@ -379,7 +380,7 @@ scanf("%d", &mode);
         exit(-1);
     }
 
-    char cmd_c[3] ;
+    char cmd_c[10] ;
     // Infinite loop
     while (TRUE) {
 
@@ -393,9 +394,6 @@ scanf("%d", &mode);
             cmd2=atoi(cmd_c);
             //printf("%d", cmd2);
             //convert in int the value read from the socket
-        }
-        else{
-            cmd2=cmd;
         }
         // If user resizes screen, re-draw UI...
         if (cmd == KEY_RESIZE) {
@@ -438,15 +436,19 @@ scanf("%d", &mode);
 
         // If input is an arrow key, move circle accordingly...
         else if (cmd2 == KEY_LEFT || cmd2 == KEY_RIGHT || cmd2 == KEY_UP || cmd2 == KEY_DOWN) {
-            
+            printf("%d", cmd2);
+            fflush(stdout);
             if(mode == 1){
                 //send on the socket
-                bzero(cmd_c, sizeof(cmd_c));
+                bzero(cmd_c, strlen(cmd_c));
                 sprintf(cmd_c, "%d", cmd2);
-                if(write(sockfd, cmd_c, sizeof(cmd_c))<sizeof(cmd_c)){
+                if(write(sockfd, cmd_c, strlen(cmd_c))<strlen(cmd_c)){
                     perror("Write:");
                 }
             }
+            printf("write done");
+            printf("%d", cmd2);
+            fflush(stdout);
 
             move_circle(cmd2);
             draw_circle();
