@@ -1,10 +1,126 @@
-< PROCESS A > draw new circle with center (0, 0) on the bitmap at time: Tue Jan 17 18:22:11 2023
+< PROCESS A > draw new circle with center (0, 0) on the bitmap at time: Wed Jan 18 13:47:30 2023
  
-< PROCESS B > center starting position (0, 0) at time: Tue Jan 17 18:22:32 2023
+< PROCESS B > center starting position (0, 0) at time: Wed Jan 18 13:47:49 2023
  
-< PROCESS B > center starting position (0, 0) at time: Tue Jan 17 18:22:32 2023
+< PROCESS B > center starting position (0, 0) at time: Wed Jan 18 13:47:49 2023
  
-< PROCESS A > draw new circle with center (800, 280) on the bitmap at time: Tue Jan 17 18:22:34 2023
+< PROCESS A > draw new circle with center (800, 280) on the bitmap at time: Wed Jan 18 13:47:50 2023
  
-< PROCESS B > center position is changed (800, 280) at time: Tue Jan 17 18:22:34 2023
+< PROCESS A > draw new circle with center (800, 280) on the bitmap at time: Wed Jan 18 13:47:50 2023
+ 
+< PROCESS B > center position is changed (800, 280) at time: Wed Jan 18 13:47:50 2023
+ 
+< PROCESS B > center position is changed (800, 280) at time: Wed Jan 18 13:47:50 2023
+ 
+< PROCESS A > draw new circle with center (800, 260) on the bitmap at time: Wed Jan 18 13:47:51 2023
+ 
+< PROCESS A > draw new circle with center (800, 260) on the bitmap at time: Wed Jan 18 13:47:51 2023
+ 
+< PROCESS B > center position is changed (800, 260) at time: Wed Jan 18 13:47:51 2023
+ 
+< PROCESS B > center position is changed (800, 260) at time: Wed Jan 18 13:47:51 2023
+ 
+< PROCESS A > draw new circle with center (780, 260) on the bitmap at time: Wed Jan 18 13:47:51 2023
+ 
+< PROCESS A > draw new circle with center (780, 260) on the bitmap at time: Wed Jan 18 13:47:51 2023
+ 
+< PROCESS B > center position is changed (780, 260) at time: Wed Jan 18 13:47:51 2023
+ 
+< PROCESS B > center position is changed (780, 260) at time: Wed Jan 18 13:47:51 2023
+ 
+< PROCESS A > draw new circle with center (760, 260) on the bitmap at time: Wed Jan 18 13:47:52 2023
+ 
+< PROCESS A > draw new circle with center (760, 260) on the bitmap at time: Wed Jan 18 13:47:52 2023
+ 
+< PROCESS B > center position is changed (760, 260) at time: Wed Jan 18 13:47:52 2023
+ 
+< PROCESS B > center position is changed (760, 260) at time: Wed Jan 18 13:47:52 2023
+ 
+< PROCESS A > draw new circle with center (740, 260) on the bitmap at time: Wed Jan 18 13:47:52 2023
+ 
+< PROCESS A > draw new circle with center (740, 260) on the bitmap at time: Wed Jan 18 13:47:52 2023
+ 
+< PROCESS B > center position is changed (740, 260) at time: Wed Jan 18 13:47:52 2023
+ 
+< PROCESS B > center position is changed (740, 260) at time: Wed Jan 18 13:47:52 2023
+ 
+< PROCESS A > draw new circle with center (720, 260) on the bitmap at time: Wed Jan 18 13:47:52 2023
+ 
+< PROCESS A > draw new circle with center (720, 260) on the bitmap at time: Wed Jan 18 13:47:52 2023
+ 
+< PROCESS B > center position is changed (720, 260) at time: Wed Jan 18 13:47:52 2023
+ 
+< PROCESS B > center position is changed (720, 260) at time: Wed Jan 18 13:47:52 2023
+ 
+< PROCESS A > draw new circle with center (720, 240) on the bitmap at time: Wed Jan 18 13:47:52 2023
+ 
+< PROCESS A > draw new circle with center (720, 240) on the bitmap at time: Wed Jan 18 13:47:52 2023
+ 
+< PROCESS B > center position is changed (720, 240) at time: Wed Jan 18 13:47:52 2023
+ 
+< PROCESS B > center position is changed (720, 240) at time: Wed Jan 18 13:47:52 2023
+ 
+< PROCESS A > draw new circle with center (720, 220) on the bitmap at time: Wed Jan 18 13:47:53 2023
+ 
+< PROCESS A > draw new circle with center (720, 220) on the bitmap at time: Wed Jan 18 13:47:53 2023
+ 
+< PROCESS B > center position is changed (720, 220) at time: Wed Jan 18 13:47:53 2023
+ 
+< PROCESS B > center position is changed (720, 220) at time: Wed Jan 18 13:47:53 2023
+ 
+< PROCESS A > draw new circle with center (720, 200) on the bitmap at time: Wed Jan 18 13:47:53 2023
+ 
+< PROCESS A > draw new circle with center (720, 200) on the bitmap at time: Wed Jan 18 13:47:53 2023
+ 
+< PROCESS B > center position is changed (720, 200) at time: Wed Jan 18 13:47:53 2023
+ 
+< PROCESS B > center position is changed (720, 200) at time: Wed Jan 18 13:47:53 2023
+ 
+< PROCESS A > draw new circle with center (700, 200) on the bitmap at time: Wed Jan 18 13:47:53 2023
+ 
+< PROCESS A > draw new circle with center (700, 200) on the bitmap at time: Wed Jan 18 13:47:53 2023
+ 
+< PROCESS B > center position is changed (700, 200) at time: Wed Jan 18 13:47:53 2023
+ 
+< PROCESS B > center position is changed (700, 200) at time: Wed Jan 18 13:47:53 2023
+ 
+< PROCESS A > draw new circle with center (680, 200) on the bitmap at time: Wed Jan 18 13:47:54 2023
+ 
+< PROCESS A > draw new circle with center (680, 200) on the bitmap at time: Wed Jan 18 13:47:54 2023
+ 
+< PROCESS B > center position is changed (680, 200) at time: Wed Jan 18 13:47:54 2023
+ 
+< PROCESS A > draw new circle with center (660, 200) on the bitmap at time: Wed Jan 18 13:47:54 2023
+ 
+< PROCESS A > draw new circle with center (660, 200) on the bitmap at time: Wed Jan 18 13:47:54 2023
+ 
+< PROCESS B > center position is changed (680, 200) at time: Wed Jan 18 13:47:54 2023
+ 
+< PROCESS A > draw new circle with center (640, 200) on the bitmap at time: Wed Jan 18 13:47:54 2023
+ 
+< PROCESS B > center position is changed (660, 200) at time: Wed Jan 18 13:47:54 2023
+ 
+< PROCESS A > draw new circle with center (640, 200) on the bitmap at time: Wed Jan 18 13:47:54 2023
+ 
+< PROCESS B > center position is changed (660, 200) at time: Wed Jan 18 13:47:54 2023
+ 
+< PROCESS A > draw new circle with center (620, 200) on the bitmap at time: Wed Jan 18 13:47:54 2023
+ 
+< PROCESS B > center position is changed (640, 200) at time: Wed Jan 18 13:47:54 2023
+ 
+< PROCESS A > draw new circle with center (620, 200) on the bitmap at time: Wed Jan 18 13:47:54 2023
+ 
+< PROCESS B > center position is changed (640, 200) at time: Wed Jan 18 13:47:54 2023
+ 
+< PROCESS A > draw new circle with center (600, 200) on the bitmap at time: Wed Jan 18 13:47:54 2023
+ 
+< PROCESS B > center position is changed (620, 200) at time: Wed Jan 18 13:47:54 2023
+ 
+< PROCESS A > draw new circle with center (600, 200) on the bitmap at time: Wed Jan 18 13:47:54 2023
+ 
+< PROCESS B > center position is changed (620, 200) at time: Wed Jan 18 13:47:54 2023
+ 
+< PROCESS B > center position is changed (600, 200) at time: Wed Jan 18 13:47:54 2023
+ 
+< PROCESS B > center position is changed (600, 200) at time: Wed Jan 18 13:47:54 2023
  

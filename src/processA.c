@@ -28,6 +28,7 @@ DESCRIPTION
 #include <semaphore.h>
 #include <errno.h>
 #include <signal.h>
+#include <unistd.h>
 
 #include <sys/types.h>
 #include <sys/socket.h>
@@ -340,10 +341,11 @@ scanf("%d", &mode);
             //listen
             listen(sockfd,5); 
 
-            //accept 
-            newsockfd = accept(sockfd,(struct sockadrr *)&cli_addr, sizeof(cli_addr));
+            //accept
+            clilen=sizeof(cli_addr);
+            newsockfd = accept(sockfd,(struct sockadrr *)&cli_addr, &clilen);
             if(newsockfd <0){
-                perror("error in opening socket");
+                perror("error in accept socket");
             }
             break;
         
@@ -390,6 +392,7 @@ scanf("%d", &mode);
         int cmd2 = cmd;        
         if (mode == 2){
             //read from socket cmd
+            bzero(cmd_c, strlen(cmd_c));
             read(newsockfd, cmd_c, sizeof(cmd_c));
             cmd2=atoi(cmd_c);
             //printf("%d", cmd2);
@@ -436,19 +439,19 @@ scanf("%d", &mode);
 
         // If input is an arrow key, move circle accordingly...
         else if (cmd2 == KEY_LEFT || cmd2 == KEY_RIGHT || cmd2 == KEY_UP || cmd2 == KEY_DOWN) {
-            printf("%d", cmd2);
-            fflush(stdout);
+            //printf("%d", cmd2);
+            int n_byte_w;
+            //fflush(stdout);
             if(mode == 1){
                 //send on the socket
                 bzero(cmd_c, strlen(cmd_c));
                 sprintf(cmd_c, "%d", cmd2);
-                if(write(sockfd, cmd_c, strlen(cmd_c))<strlen(cmd_c)){
+                n_byte_w = write(sockfd, cmd_c, strlen(cmd_c));
+                if(n_byte_w<strlen(cmd_c)){
                     perror("Write:");
                 }
             }
-            printf("write done");
-            printf("%d", cmd2);
-            fflush(stdout);
+
 
             move_circle(cmd2);
             draw_circle();
