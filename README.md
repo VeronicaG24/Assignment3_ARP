@@ -32,7 +32,7 @@ bash ./run.sh
 ```
 
 ## Description of the code
-The code is divided into 4 processes: ProcessA, ProcessB, and Master. In each of the process, signals are manage through signal handler.
+The code is divided into 3 processes: ProcessA, ProcessB, and Master. In each of the process, signals are manage through signal handler.
 
 The log file is updated each time occurs one of the following event:
 - from ProcessA: button "P" is pressed and the bitmap is saved as .bmp file
