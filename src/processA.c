@@ -163,6 +163,7 @@ void set_mode() {
             struct hostent *server;
             printf("hostname:");
             scanf("%s", server_name);
+
             // get port number
             printf("\nportnumber to use:");
             scanf("%d", &portno);
@@ -171,10 +172,11 @@ void set_mode() {
                 fprintf(stderr, "ERROR, no such host\n");
                 sleep(5);
             }
+
+            // connect to the socket
             serv_addr.sin_family = AF_INET;
             serv_addr.sin_port = htons(portno);
             bcopy((char *)server->h_addr, (char *)&serv_addr.sin_addr.s_addr, server->h_length);
-            // connect to the socket
             if (connect(sockfd, &serv_addr, sizeof(serv_addr)) < 0) {
                 perror("connect error");
                 sleep(5);
@@ -218,7 +220,7 @@ void set_mode() {
 
         default:
             printf("error unrecognized value inserted");
-            // ask again value;
+            // ask again
             set_mode();
             break;
     }
@@ -394,6 +396,7 @@ int main(int argc, char *argv[]) {
         exit(-1);
     }
 
+    //set the mode
     set_mode();
     
     draw_bmp((circle.x) * 20, (circle.y) * 20);
@@ -421,21 +424,21 @@ int main(int argc, char *argv[]) {
         exit(-1);
     }
 
+    //char array to send command to the socket
     char cmd_c[10];
+
     // Infinite loop
     while (TRUE) {
 
         // Get input in non-blocking mode
         int cmd = getch();
-        // add cmd2 when server read from socket when client/normale = cmd
+        // cmd2 when server read from the socket
         int cmd2 = cmd;
         if (mode == 2) {
             // read from socket cmd
             bzero(cmd_c, strlen(cmd_c));
             read(newsockfd, cmd_c, sizeof(cmd_c));
             cmd2 = atoi(cmd_c);
-            // printf("%d", cmd2);
-            // convert in int the value read from the socket
         }
         // If user resizes screen, re-draw UI...
         if (cmd == KEY_RESIZE) {
@@ -478,9 +481,8 @@ int main(int argc, char *argv[]) {
 
         // If input is an arrow key, move circle accordingly...
         else if (cmd2 == KEY_LEFT || cmd2 == KEY_RIGHT || cmd2 == KEY_UP || cmd2 == KEY_DOWN) {
-            // printf("%d", cmd2);
+
             int n_byte_w;
-            // fflush(stdout);
             if (mode == 1) {
                 // send on the socket
                 bzero(cmd_c, strlen(cmd_c));
