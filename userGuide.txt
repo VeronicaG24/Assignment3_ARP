@@ -24,7 +24,7 @@ will be saved in "out" folder.
 
 Client mode:
 After choosing the IP address and the port number for the connection, to move the green cross, it is necessary to select the "processA" window and click the arrows button on the keyboard.
-When the cross moves, its position of the center will be displayed on processB window (plotting the distance between the previous center and the second center).
+When the cross moves, its position of the center will be displayed on processB window (plotting the distance between the previous center and the second center) and send to the server via socket.
 
 To print the circle in the current position, the button "P" on processA has to be clicked with the mouse and the image
 will be saved in "out" folder.
