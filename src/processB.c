@@ -286,7 +286,7 @@ int main(int argc, char const *argv[]) {
     }
 
     //get first position of the center
-    /*if(sem_wait(sem_id2)==-1){
+    if(sem_wait(sem_id2)==-1){
         perror("B-error in wait sem2");
     }
     find_center();
@@ -294,9 +294,9 @@ int main(int argc, char const *argv[]) {
         perror("B-error in post sem1");
         relese_resources();
         exit(-1);
-    }*/
-    c.x=COLS / 2;
-    c.y=LINES / 2;
+    }
+    //c.x=COLS / 2;
+    //c.y=LINES / 2;
     c_old[num_center].x = c.x;
     c_old[num_center].y = c.y;
     mvaddch(c.y, c.x, '0');

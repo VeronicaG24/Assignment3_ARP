@@ -143,7 +143,7 @@ int release_resouces()
 }
 void set_mode()
 {
-    printf("What kind of mode process run has to run ? 0 normal - 1 client - 2 server:");
+    printf("What kind of mode process run has to run ? 0 normal - 1 client - 2 server:\n");
     scanf("%d", &mode);
     switch (mode)
     {
@@ -367,7 +367,6 @@ int main(int argc, char *argv[])
     // local bitmap
     bmp = bmp_create(width, height, depth);
     
-
     // open the shared memery
     shm_fd = shm_open(shm_name, O_CREAT | O_RDWR, 0666);
     if (shm_fd == -1)
@@ -419,7 +418,6 @@ int main(int argc, char *argv[])
 
     set_mode();
     
-    init_console_ui();
     draw_bmp((circle.x) * 20, (circle.y) * 20);
 
     // send first bitmap
