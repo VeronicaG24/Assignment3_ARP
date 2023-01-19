@@ -295,8 +295,6 @@ int main(int argc, char const *argv[]) {
         relese_resources();
         exit(-1);
     }
-    //c.x=COLS / 2;
-    //c.y=LINES / 2;
     c_old[num_center].x = c.x;
     c_old[num_center].y = c.y;
     mvaddch(c.y, c.x, '0');
