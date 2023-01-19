@@ -43,7 +43,15 @@ The log file is updated each time occurs one of the following event:
 The master program spawns the other processes, and waits until the two processes close to exit. It creates the log file.
 
 ### ProcessA
-ProcessA manages the movement of the circle due to the pression of the arrow button on the keyboard, update the shared memory and if you press the button "P" it prints/saves the bitmap with the circle as a ".bmp" file.
+ProcessA manages the chossing of modality:
+- 0: default mode
+	the movement of the circle due to the pression of the arrows buttons on the keyboard, update the shared memory and if you press the button "P" it prints/saves the bitmap with the circle as a ".bmp" file.
+- 1: client mode
+	the IP address and the port number for the connection needs to be insert, and then the movement of the circle due to the pression of the arrows buttons on the keyboard, updates the shared memory and if you press the button "P" it prints/saves the bitmap with the circle as a ".bmp" file. All the commands related to the arrows buttons are sent through socket to the server.
+- 2: server mode
+	the port number is asked, and then waits until the connection with a client is established. Then, on the two windows will be displayed what the client is doing: the green cross is command by the client so the movement cannot be manage using arrows buttons. This mode also update the shared memory and if you press the button "P" it prints/saves the bitmap with the circle as a ".bmp" file.
+	
+To change the modality is necessary to press "Ctrl + c", and then choose if change the mode or close the window.
 
 ### ProcessB
 ProcessB reads from the shared memory and look for the center. If the center of the circle is changed, it plots the new position of the center.
