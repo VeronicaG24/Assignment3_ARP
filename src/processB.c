@@ -288,8 +288,6 @@ int main(int argc, char const *argv[]) {
     //get first position of the center
     if(sem_wait(sem_id2)==-1){
         perror("B-error in wait sem2");
-        relese_resources();
-        exit(-1);
     }
     find_center();
     if(sem_post(sem_id1)==-1){

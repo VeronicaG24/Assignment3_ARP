@@ -6,13 +6,32 @@ And run it:
     bash ./run.sh
 
 Two konsole windows will be displayed:
-1. One with a green cross (named ProcessA) and a blue button "P"
+1. One (named ProcessA) where you can choose the mode:
+- 0 for default mode: by choosing this mode a green cross and a blue button "P" will be shown
+- 1 for client mode: by choosing this mode the IP address and the port number for the connection will be asked and then a green cross and a blue button "P" will be shown
+- 2 for server mode: by choosing this mode the port number will be asked and then it waits until a connection is established. After that a green cross and a blue button "P" will be shown
+
 2. One (named ProcessB) completely black with one "0" corresponding to the center of the circle 
 rappresented with the green cross in the first windows.
 
+Default mode:
 To move the green cross, it is necessary to select the "processA" window and click the arrows button on the keyboard.
 When the cross moves, its position of the center will be displayed on processB window (plotting the distance between 
 the previous center and the second center).
 
 To print the circle in the current position, the button "P" on processA has to be clicked with the mouse and the image
 will be saved in "out" folder.
+
+Client mode:
+After choosing the IP address and the port number for the connection, to move the green cross, it is necessary to select the "processA" window and click the arrows button on the keyboard.
+When the cross moves, its position of the center will be displayed on processB window (plotting the distance between the previous center and the second center) and send to the server via socket.
+
+To print the circle in the current position, the button "P" on processA has to be clicked with the mouse and the image
+will be saved in "out" folder.
+
+Server mode:
+After choosing the port number and waiting for the connection with the client, the movement made by the client will be displayed on both window. To print the circle in the current position, the button "P" on processA has to be clicked with the mouse and the image will be saved in "out" folder.
+
+
+To change the modality, it is necessary to press "Ctrl + c" and then choose of change the mode (0) or close the window (1).
+
